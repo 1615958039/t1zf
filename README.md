@@ -1,15 +1,15 @@
 # T1支付 iapp后台聚合接口管理系统
 
 安装教程&说明：
-1. 准备服务器lnmp环境,php>7.0,mysql==5.5 (建议使用宝塔)
-2. 上传源码到服务器web目录下
-3. 准备数据库，导入data.sql
-4. 用编辑器打开 /lib/config.php 修改里面的相关配置
-5. 配置nginx伪静态,代码在本页最下方，建议使用宝塔直接粘贴进伪静态即可
-6. 用浏览器访问 -> http://域名/chack.php 检查函数库及验证码是否正常可用
-7. 自行测试整站
+1  准备服务器lnmp环境,php>7.0,mysql==5.5 (建议使用宝塔)
+2  上传源码到服务器web目录下
+3  准备数据库，导入data.sql
+4  用编辑器打开 /lib/config.php 修改里面的相关配置
+5  配置nginx伪静态,代码在本页最下方，建议使用宝塔直接粘贴进伪静态即可
+6  用浏览器访问 -> http://域名/chack.php 检查函数库及验证码是否正常可用
+7  自行测试整站
 
-8. 挂监控 -> http://域名/control.do 和 http://域名/cz_control.do
+8  挂监控 -> http://域名/control.do 和 http://域名/cz_control.do
 建议频率建议越快越好
 control.do是订单监控，负责支付成功的回调处理
 cz_control.do是充值订单监控，负责后台用户充值的回调处理
@@ -22,9 +22,8 @@ cz_control.do是充值订单监控，负责后台用户充值的回调处理
 
 开源时间为2019/07/26，如有BUG请及时与我(Q1615958039)反馈
 
-以下内容建议在windows下使用sublime text 查看
-
-网站源码结构简介
+####**网站源码结构简介:**
+```
 ├─/admin/		-> 后台管理系统前端文件(h5,js,css,第三方库)
 ├─/file/		-> 云盘系统的文件存储路径
 ├─/lib/			-> php代码存放目录
@@ -82,10 +81,11 @@ cz_control.do是充值订单监控，负责后台用户充值的回调处理
 ├─rt_0.html 	-> 支付回调页
 ├─data.sql		-> 数据库文件,需要导入数据库
 ├─demo.iapp		-> iapp对接demo
+```
 
 
-
-数据库表简介
+####**数据库表简介:**
+```
 admin 			-> 后台管理员数据表
 admin_info	 	-> 管理员资料表
 apk	 			-> 安装包数据表
@@ -113,12 +113,10 @@ users_log_custom-> 用户自定义变量日志
 users_log_jf	-> 用户积分日志
 users_log_money	-> 用户余额日志
 users_log_vip	-> 用户vip日志
+```
 
-
-
- 
-
-nginx伪静态:
+####**nginx伪静态:**
+```html
 rewrite ^/randcode.img /lib/code.php;
 rewrite ^/admin/login.do /lib/admin/login.php;
 rewrite ^/randcode.img /lib/code.php;
@@ -157,3 +155,5 @@ rewrite	^/xyy.json /lib/api/xyy.php;
 rewrite	^/admin/xyy.json /lib/admin/xyy.php;
 rewrite	^/admin/km.json /lib/admin/km.php;
 rewrite	^/admin/telboom.json /lib/admin/telboom.php;
+```
+
