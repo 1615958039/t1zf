@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>邮件日志</title>
+		
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+		
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css"/>
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+
+				<div class="col-sm-8">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>接口发件日志</h5>
+							<div class="ibox-tools">
+								<a @click="refresh" class="collapse-link">
+									<i class="glyphicon glyphicon-refresh"></i>重载
+								</a>
+							</div>
+						</div>
+						<div class="ibox-content">
+
+							<div class="row" style="margin-bottom: 5px;">
+								<div class="col-lg-4">
+									<div class="input-group">
+										
+
+										<input v-model="keyword" type="text" class="form-control" :placeholder="place">
+										
+										<span class="input-group-btn" :class="{'open':open_1}">
+											
+                                            <button @click="openselect(1)" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{search}}<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li v-for="item in searchList">
+													<a @click="setsearch(item)">{{item}}</a>
+												</li>
+											</ul>
+											
+											
+											<button @click="getpage" class="btn btn-primary" type="button">搜索</button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th @click="changeOrderby2" :class="{'dropup':(orderby=='id升序'),'textred':(orderby=='id升序' || orderby=='id降序')}">日期<span class="caret"></span></th>
+											<th>标题</th>
+											<th>内容</th>
+											<th>收件人</th>
+											<th>发件IP</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in items">
+											<th>{{ item.add_time }}</th>
+											<th>{{ item.add_title }}</th>
+											<th @click="tc(item.add_text)">{{ item.add_text | addtext }}</th>
+											<th>{{ item.add_who }}</th>
+											<th>{{ item.add_ip }}</th>
+											<th>
+												<span @click="del(item.id)" class="badge badge-warning"><span class="fa fa-trash"></span></span>
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~  (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<p>
+								<div>
+									共 {{havenum}} 条数据,每页
+									<span class="btn-group dropup" :class="{'open':open_2}">
+										<button @click="openselect(2)" class="btn btn-white btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{pagenum}}<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li>
+												<a @click="dopagenum(10)">10</a>
+											</li>
+											<li>
+												<a @click="dopagenum(30)">30</a>
+											</li>
+											<li>
+												<a @click="dopagenum(50)">50</a>
+											</li>
+											<li>
+												<a @click="dopagenum(100)">100</a>
+											</li>
+										</ul>
+									</span>
+									<span>条</span>
+								</div>
+
+								<div v-html="pagetext">
+
+								</div>
+
+							</p>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				<div class="col-sm-4">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>接口配置</h5>
+						</div>
+						<div class="ibox-content">
+							<div class="form-horizontal">
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">Smtp：</label>
+									<div class="col-sm-9">
+                                    	<div class="input-group">
+	                                    	<input :disabled="edutype==1" v-model="smtp" type="text" placeholder="发件地址" class="form-control">
+	                                    	<span class="input-group-btn" :class="{'open':open_3}">
+												<button @click="openselect(3)" :disabled="edutype==1" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">推荐<span class="caret"></span></button>
+												<ul class="dropdown-menu">
+													<li>
+														<a @click="tj(1)">腾讯企业邮</a>
+													</li>
+													<li>
+														<a @click="tj(2)">普通163邮箱</a>
+													</li>
+													<li>
+														<a @click="tj(3)">普通QQ邮箱</a>
+													</li>
+													<li>
+														<a @click="tj(4)">阿里企业邮</a>
+													</li>
+												</ul>
+											</span>
+										</div>
+                                	</div>
+                            	</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">端口：</label>
+									<div class="col-sm-9">
+                                    	<input :disabled="edutype==1" v-model="port" type="text" placeholder="一般为25" class="form-control">
+                                	</div>
+                            	</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">SSL：</label>
+									<div class="col-sm-9">
+	                                    <select :disabled="edutype==1" v-model="ssl" class="form-control" name="account">
+	                                        <option value="false">关闭</option>
+	                                        <option value="true">开启</option>
+	                                    </select>
+									</div>
+								</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">账号：</label>
+									<div class="col-sm-9">
+                                    	<input :disabled="edutype==1" v-model="user" type="text" placeholder="发件邮箱账号" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">密码：</label>
+									<div class="col-sm-9">
+                                    	<input :disabled="edutype==1" v-model="pass" type="text" placeholder="发件邮箱密码或安全密码" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">名称：</label>
+									<div class="col-sm-9">
+                                    	<input :disabled="edutype==1" v-model="name" type="text" placeholder="发件人昵称&邮件大标题" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">管理员：</label>
+									<div class="col-sm-9">
+                                    	<input :disabled="edutype==1" v-model="email" type="text" placeholder="管理员收件邮箱" class="form-control">
+                                	</div>
+                            	</div>
+								
+								<br>
+								
+								<button @click="doedu" v-show="edutype==2" class="btn btn-primary col-sm-offset-3" type="button"><i class="fa fa-check"></i>&nbsp;提交</button>
+								<button @click="edutype=2" v-show="edutype==1" class="btn btn-info col-sm-offset-3" type="button"><i class="fa fa-paste"></i>编辑</button>
+		                        <button v-show="edutype==2" @click="email='';name='';pass='';user='';ssl=false;port='';smtp='';" class="btn btn-warning " type="button"><i class="fa fa-warning"></i><span class="bold">清空</span></button>
+								
+								<a @click="dotesk" v-show="edutype==1" class="btn btn-success btn-outline">
+		                            <i class="fa fa-paper-plane-o"> </i> 测试
+		                        </a>
+								
+								
+							</div>
+                                    
+						
+						
+						
+						</div>
+					</div>
+				</div>
+				
+				
+				
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					place: '邮件内容',
+					pagetext: '',
+					items: [],
+
+					search: '内容',
+					keyword: '',
+					nowpage: '1',
+					pagenum: '30',
+					orderby: '',
+
+					maxpage: '',
+					havenum: '',
+
+					searchList: ['内容','ip','标题','收件人','时间'],
+					
+					open_1:false,
+					open_2:false,
+					open_3:false,
+					
+					edutype:'1',
+					smtp:'',
+					port:'',
+					ssl:false,
+					user:'',
+					pass:'',
+					name:'',
+					email:'',
+					
+					
+				},
+				watch: {
+					search(val) {
+						if(val == "内容") {
+							this.place = "邮件内容";
+						} else if(val == "ip"){
+							this.place = "发件IP地址";
+						} else if(val == "标题"){
+							this.place = "邮件标题";
+						} else if(val == "收件人"){
+							this.place = "收件人邮箱";
+						}else{
+							this.place = "时间描述";
+						}
+					}
+				},
+				filters: {
+					addtext(val){
+						val = val+'';
+						if(val.length>10){
+							val = val.substring(0,10)+'...';
+						}
+						return val;
+					}
+				},
+				methods: {
+					dopage(now, max) {
+						now = Number(now);
+						if(now < 1 || !now || now == '') {
+							now = 1;
+						}
+						let a = [];
+						let b = [];
+						for(let i = 0; i < 5; i++) {
+							a[i] = now - 2 + i;
+							if(a[i] >= 1 && a[i] <= max) {
+								b.push(a[i]);
+							}
+						}
+						let l = now - 1;
+						let r = now + 1;
+
+						if(now == 1) {
+							var page = '<ul class="pagination"><li class="disabled"><a>首页</a></li><li class="disabled"><a>&laquo;</a></li>';
+						} else {
+							var page = '<ul class="pagination"><li><a  onclick="vm.getpage(1)">首页</a></li><li><a onclick="vm.getpage(' + l + ')">&laquo;</a></li>';
+						}
+
+						for(i = 0; i < b.length; i++) {
+							if(b[i] == now) {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')"><font color="red">' + b[i] + '</font></a></li>';
+							} else {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')">' + b[i] + '</a></li>';
+							}
+						}
+
+						if(now == max) {
+							page = page + '<li  class="disabled"><a>&raquo;</a></li><li class="disabled"><a>尾页</a></li></ul>';
+						} else {
+							page = page + '<li><a onclick="vm.getpage(' + r + ')">&raquo;</a></li><li><a onclick="vm.getpage(' + max + ')">尾页</a></li></ul>';
+						}
+
+						this.pagetext = page;
+					},
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.post("../../mail.json", {
+							search: this.search,
+							keyword: this.keyword,
+							nowpage: this.nowpage,
+							pagenum: this.pagenum,
+							orderby: this.orderby
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data,
+									this.search = res.data.modle.search,
+									this.keyword = res.data.modle.keyword,
+									this.nowpage = res.data.modle.nowpage,
+									this.pagenum = res.data.modle.pagenum,
+									this.orderby = res.data.modle.orderby,
+									this.maxpage = res.data.modle.maxpage,
+									this.havenum = res.data.modle.havenum
+								this.dopage(this.nowpage, this.maxpage);
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+
+					},
+					dopagenum(num) {
+						this.pagenum = num;
+						this.getpage();
+						this.open_2=false;
+					},
+					changeOrderby() {
+						if(this.orderby == "金额降序" || this.orderby == '') {
+							this.orderby = "金额升序";
+						} else {
+							this.orderby = "金额降序";
+						}
+						this.getpage();
+					},
+					changeOrderby2() {
+						if(this.orderby == "id降序" || this.orderby == '') {
+							this.orderby = "id升序";
+						} else {
+							this.orderby = "id降序";
+						}
+						this.getpage();
+					},
+					setsearch(val) {
+						this.search = val;
+						this.open_1=false;
+					},
+					refresh(){
+						location.href=location.href;
+					},
+					del(id) {
+						let that = this;
+						swal({
+							title: "",
+							text: "是否删除记录(id=" + id + ")，删除之后无法恢复，请谨慎操作",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../mail.json", {
+								type: 'del',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.getpage();
+									}, 100);
+									swal("删除成功！", "您已经永久删除了这条记录。", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("删除失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					openselect(id){
+						if(id==1){
+							if(this.open_1==true){
+								this.open_1=false;
+							}else{
+								this.open_1=true;
+							}
+						}else if(id==2){
+							if(this.open_2==true){
+								this.open_2=false;
+							}else{
+								this.open_2=true;
+							}
+						}else if(id==3){
+							if(this.open_3==true){
+								this.open_3=false;
+							}else{
+								this.open_3=true;
+							}
+						}
+					},
+					getinfo(id){
+						var that = this;
+						this.$http.post('../../pay.list',{
+							type:'getinfo',
+							id:id
+						}).then(function(res){
+							that.orderinfo = res.data.info;
+						},function(){
+							
+						})
+					},
+					getmail(){
+						var that = this;
+						this.$http.post("../../mail.json",{
+							type:'index'
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								if(res.data.smtp==''){
+									that.edutype = '2';
+								}else{
+									that.edutype = '1';
+								}
+								this.smtp = res.data.smtp;
+								this.port = res.data.port;
+								this.ssl = res.data.ssl;
+								this.user = res.data.user;
+								this.pass = res.data.pass;
+								this.name = res.data.name;
+								this.email = res.data.email;
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+						
+					},
+					doedu(){
+						var that = this;
+						this.$http.post("../../mail.json",{
+							type:'edu',
+							smtp:that.smtp,
+							port:that.port,
+							ssl:that.ssl,
+							user:that.user,
+							pass:that.pass,
+							name:that.name,
+							email:that.email,
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								that.getmail();
+								layer.alert('保存成功！', {icon: 1});
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							}else if(res.data.code == '0'){
+								layer.alert(res.data.message,{icon:2});
+							}else{
+								layer.alert("邮箱绑定失败！请检查smtp和端口账号密码是否都正确。如果不会配置，请加官方群(792913779)", {icon: 2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+						
+					},
+					tc(text){
+						text = text.replace(/\</g,"&lt;");
+						text = text.replace(/\>/g,"&gt;");
+						layer.alert(text,{
+							title:'邮件内容详情：'
+						})
+					},
+					dotesk(){
+						this.$http.post("../../mail.json",{
+							type:'tesk'
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								layer.alert(res.data.message, {icon: 1});
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon: 2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					tj(id){
+						if(id==1){
+							this.ssl = true;
+							this.smtp = 'smtp.exmail.qq.com';
+							this.port = '465';
+							setTimeout(function(){
+								layer.alert('已填写SMTP、端口、ssl。腾讯企业邮箱需使用子账户并且子账户需开启SMTP，下面的账号密码请填写子账户的登陆账号密码');
+							},100);
+						}else if(id==2){
+							this.ssl = false;
+							this.smtp = 'smtp.163.com';
+							this.port = '25';
+							setTimeout(function(){
+								layer.alert('已填写SMTP、端口、ssl。163新注册的邮箱开启SMTP需要使用安全密码(下面的邮箱密码填安全密码)，老用户开启smtp无提示则默认填登陆密码即可');
+							},100);
+						}else if(id==3){
+							this.ssl = true;
+							this.smtp = 'smtp.qq.com';
+							this.port = '465';
+							setTimeout(function(){
+								layer.alert('已填写SMTP、端口、ssl。QQ邮箱需要的设置内开启SMTP，下面的邮箱密码请填写设置smtp时的安全密码');
+							},100);
+						}else if(id==4){
+							this.ssl = true;
+							this.smtp = 'smtp.mxhichina.com';
+							this.port = '465';
+							layer.alert('已填写SMTP、端口、ssl。阿里企业邮箱账号密码即为企业邮箱的登陆账号密码，需开启SMTP');
+						}
+						this.openselect(3);
+					}
+
+				},
+				mounted: function(){
+					
+					this.getmail();
+					this.getpage();
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

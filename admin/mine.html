@@ -1,0 +1,668 @@
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>首页</title>
+		<meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+		<meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+		<link href="css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+		<!-- Morris -->
+		<link href="css/plugins/morris/morris-0.4.3.min.css" rel="stylesheet">
+
+		<!-- Gritter -->
+		<link href="js/plugins/gritter/jquery.gritter.css" rel="stylesheet">
+
+		<link href="css/animate.css" rel="stylesheet">
+		<link href="css/style.css?v=4.1.0" rel="stylesheet">
+		
+		
+
+		<script src="js/jquery.min.js?v=2.1.4"></script>
+		<script src="js/bootstrap.min.js?v=3.3.6"></script>
+	
+		<script src="js/plugins/echarts/echarts-all.js"></script>
+	
+		<script src="js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+
+
+
+
+
+	</head>
+
+	<body class="gray-bg">
+		<div class="wrapper wrapper-content">
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<span class="label label-info pull-right">累计</span>
+							<h5>订单</h5>
+						</div>
+						<div class="ibox-content">
+							<h1 class="no-margins" id="haveorder"></h1>
+							<small>支付系统交易订单</small>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<span class="label label-info pull-right">累计</span>
+							<h5>用户数量</h5>
+						</div>
+						<div class="ibox-content">
+							<h1 class="no-margins" id="haveuser"></h1>
+							<small>用户系统注册用户</small>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>App活跃用户</h5>
+						</div>
+						<div class="ibox-content">
+							<h1 class="no-margins" id="online">0</h1>
+							<small>今日已登陆用户</small>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<span class="badge badge-primary pull-right"  data-toggle="modal" data-target="#myModal">充值</span>
+							
+							 <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated flipInY">
+                                        <div class="modal-header" style="padding: 10px 10px;">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">在线充值</h4>
+                                        </div>
+                                        <div class="modal-body" style="padding: 20px 20px 20px 20px;">
+                                            <div class="form-horizontal">
+	                                            <div class="form-group" style="margin-bottom: 0px;">
+					                                <div class="col-sm-12">
+					                                	<div class="input-group m-b">
+					                                		<span class="input-group-addon">充值金额</span>
+					                                    	<input id="cz_money" type="text" value="10.00" class="form-control">
+					                                    	<span class="input-group-addon">元</span>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                            
+					                            <div class="form-group" style="margin-bottom: 0px;">
+					                                <div class="col-sm-12">
+					                                	<div class="input-group m-b">
+					                                		<span class="input-group-addon">支付方式</span>
+					                                    	<select id="cz_paytype" class="form-control m-b" name="account">
+						                                        <option>支付宝</option>
+						                                        <option>QQ钱包</option>
+						                                        <option>微信</option>
+						                                    </select>
+					                                    </div>
+					                                </div>
+					                            </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                        	<button class="btn btn-warning btn-outline" data-dismiss="modal">
+					                            <i class="fa fa-remove"></i> 算了吧
+					                        </button>
+                                            <button id="gopay" class="btn btn-success btn-outline">
+					                            <i class="fa fa-paper-plane-o"></i> 前往付款
+					                        </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+							
+							<h5>账户余额</h5>
+						</div>
+						
+						<div class="ibox-content">
+							<h1 class="no-margins" id="money"></h1>
+							<small onclick="location.href='page/sys/money_log.html'">点击查看日志</small>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			<div class="row" id="chart" style="display: none;">
+				<div class="col-sm-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>平台近况统计</h5>
+							<div class="pull-right">
+								<div class="btn-group">
+									
+									<a class="dropdown-toggle" data-toggle="dropdown"><span id="listtext">最近7天</span><span class="caret"></span></a>
+									
+		                            <ul class="dropdown-menu dropdown-user">
+		                                <li><a onclick="list_7()">最近7天</a></li>
+		                                <li><a onclick="list_30()">最近30天</a></li>
+		                            </ul>
+									
+								</div>
+								
+							</div>
+							
+							
+						</div>
+						<div class="ibox-content" style="padding: 10px 0px 0px 0px;">
+							<div class="echarts" id="echarts-line-chart"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>账户信息</h5>
+						</div>
+						<div class="ibox-content">
+							<div class="form-horizontal">
+								
+								<div class="form-group">
+	                                <label id="dilog_apikey" class="col-sm-2 control-label">Key:<a class="fa fa-question-circle"></a></label>
+	                                <div class="col-sm-10">
+	                                	<div class="input-group m-b">
+		                                    <input id="apikey" type="text" disabled="" class="form-control">
+		                                    <span data-toggle="modal" data-target="#myModa5" class="input-group-addon">
+		                                    	<span class="fa fa-refresh"></span>
+		                                    </span>
+		                                </div>
+	                                </div>
+	                            </div>
+	                            
+	                            
+	                            <div class="form-group">
+	                                <label id="dilog_token" class="col-sm-2 control-label">Token:<a class="fa fa-question-circle"></a></label>
+	                                <div class="col-sm-10">
+	                                	<div class="input-group m-b">
+		                                    <input disabled="" id="token" type="text"  class="form-control">
+		                                    <span data-toggle="modal" data-target="#myModa5" class="input-group-addon">
+		                                    	<span class="fa fa-refresh"></span>
+		                                    </span>
+		                                </div>
+	                                </div>
+	                            </div>
+								
+							
+							<div class="modal inmodal" id="myModa5" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated flipInY">
+                                        <div class="modal-header" style="padding: 10px 10px;">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">Key&Token 更换</h4>
+                                        </div>
+                                        <div class="modal-body" style="padding: 20px 20px 20px 20px;">
+                                        	<p><span class="label">更新key&token后立即生效，旧key将无法使用。暂时不支持自动更换，请联系站长</span></p>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+							
+							
+								<div class="form-group">
+	                                <label id="dilog_user" class="col-sm-2 control-label">用户上限:<a class="fa fa-question-circle"></a></label>
+	                                <div class="col-sm-10">
+	                                	<div class="input-group m-b">
+		                                    <input disabled="" id="max_user" type="text"  class="form-control">
+		                                    <span  data-toggle="modal" data-target="#myModa2" class="input-group-addon">
+		                                    	<span class="fa fa-plus"></span>
+		                                    </span>
+		                                </div>
+	                                </div>
+	                            </div>
+								
+							<div class="modal inmodal" id="myModa2" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated flipInY">
+                                        <div class="modal-header" style="padding: 10px 10px;">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">用户扩容</h4>
+                                        </div>
+                                        <div class="modal-body" style="padding: 20px 20px 20px 20px;">
+                                        	<p><span class="label">价格： 1k = 30元</span></p>
+                                            <div class="form-horizontal">
+	                                            <div class="form-group" style="margin-bottom: 0px;">
+					                                <div class="col-sm-12">
+					                                	<div class="input-group m-b">
+					                                		<span class="input-group-addon">增加数量</span>
+					                                    	<input id="add_user" type="tel" value="1" placeholder="单位为千" class="form-control">
+					                                    	<span class="input-group-addon">千</span>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                            
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="do_user" class="btn btn-success btn-outline">
+					                            <i class="fa fa-paper-plane-o"></i> 立即扩容 <span id="user_money">(30元)</span>
+					                        </button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+								
+								
+								
+								<div class="form-group">
+	                                <label id="dilog_file" class="col-sm-2 control-label">云盘内存上限:<a class="fa fa-question-circle"></a></label>
+	                                <div class="col-sm-10">
+	                                	<div class="input-group m-b">
+		                                    <input disabled="" id="max_file" type="text"  class="form-control">
+		                                    <span data-toggle="modal" data-target="#myModa3" class="input-group-addon">
+		                                    	<span class="fa fa-plus"></span>
+		                                    </span>
+		                                </div>
+	                                </div>
+	                            </div>
+								
+							<div class="modal inmodal" id="myModa3" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated flipInY">
+                                        <div class="modal-header" style="padding: 10px 10px;">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">云盘扩容</h4>
+                                        </div>
+                                        <div class="modal-body" style="padding: 20px 20px 20px 20px;">
+                                        	<p><span class="label">价格：1m = 0.5元</span></p>
+                                            <div class="form-horizontal">
+	                                            <div class="form-group" style="margin-bottom: 0px;">
+					                                <div class="col-sm-12">
+					                                	<div class="input-group m-b">
+					                                		<span class="input-group-addon">增加数量</span>
+					                                    	<input id="add_file" type="tel" value="1" placeholder="单位为m" class="form-control">
+					                                    	<span class="input-group-addon">m</span>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                            
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="do_file" class="btn btn-success btn-outline">
+					                            <i class="fa fa-paper-plane-o"></i> 立即扩容 <span id="file_money">(0.5)</span>
+					                        </button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+								
+								
+								
+								<div class="form-group">
+	                                <label id="dilog_mail" class="col-sm-2 control-label">邮件日志上限:<a class="fa fa-question-circle"></a></label>
+	                                <div class="col-sm-10">
+	                                	<div class="input-group m-b">
+		                                    <input disabled="" id="max_mail" type="text"  class="form-control">
+		                                    <span data-toggle="modal" data-target="#myModa4" class="input-group-addon">
+		                                    	<span class="fa fa-plus"></span>
+		                                    </span>
+		                                </div>
+	                                </div>
+	                            </div>
+								
+							<div class="modal inmodal" id="myModa4" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content animated flipInY">
+                                        <div class="modal-header" style="padding: 10px 10px;">
+                                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                            <h4 class="modal-title">邮件日志扩容</h4>
+                                        </div>
+                                        <div class="modal-body" style="padding: 20px 20px 20px 20px;">
+                                        	<p><span class="label">价格：1w = 10元</span></p>
+                                            <div class="form-horizontal">
+	                                            <div class="form-group" style="margin-bottom: 0px;">
+					                                <div class="col-sm-12">
+					                                	<div class="input-group m-b">
+					                                		<span class="input-group-addon">增加数量</span>
+					                                    	<input id="add_mail" type="tel" value="1" placeholder="单位为万" class="form-control">
+					                                    	<span class="input-group-addon">万</span>
+					                                    </div>
+					                                </div>
+					                            </div>
+					                            
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button id="do_mail" class="btn btn-success btn-outline">
+					                            <i class="fa fa-paper-plane-o"></i> 立即扩容 <span id="mail_money">(10)</span>
+					                        </button>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+							
+							
+							
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			<script type="text/javascript">
+				
+				function list_7(){
+					$("#echarts-line-chart").text("");
+					$.get("mine.json",function(res){
+						res = JSON.parse(res);
+						
+						var chart_date = res.chart_date;
+						var chart_yesorder = res.chart_yesorder;
+						var chart_allorder = res.chart_allorder;
+						var chart_money = res.chart_money;
+						
+						var lineChart=echarts.init(document.getElementById("echarts-line-chart")),lineoption={tooltip:{trigger:"axis"},legend:{data:["活跃用户","签到用户","交易金额"]},calculable:!0,xAxis:[{type:"category",boundaryGap:!1,data:chart_date,axisLabel:{formatter:"{value}号"}}],yAxis:[{type:"value",axisLabel:{formatter:"{value}"}}],series:[{name:"活跃用户",type:"line",data:chart_yesorder},{name:"签到用户",type:"line",data:chart_allorder},{name:"交易金额",type:"line",data:chart_money}]};lineChart.setOption(lineoption);
+						$("#listtext").text("最近7天");
+					})
+					
+				}
+				
+				function list_30(){
+					$("#echarts-line-chart").text("");
+					$.get("mine.json?type=30",function(res){
+						res = JSON.parse(res);
+						
+						var chart_date = res.chart_date;
+						var chart_yesorder = res.chart_yesorder;
+						var chart_allorder = res.chart_allorder;
+						var chart_money = res.chart_money;
+						
+						var lineChart=echarts.init(document.getElementById("echarts-line-chart")),lineoption={tooltip:{trigger:"axis"},legend:{data:["活跃用户","签到用户","交易金额"]},calculable:!0,xAxis:[{type:"category",boundaryGap:!1,data:chart_date,axisLabel:{formatter:"{value}号"}}],yAxis:[{type:"value",axisLabel:{formatter:"{value}"}}],series:[{name:"活跃用户",type:"line",data:chart_yesorder},{name:"签到用户",type:"line",data:chart_allorder},{name:"交易金额",type:"line",data:chart_money}]};lineChart.setOption(lineoption);
+						$("#listtext").text("最近30天");
+					})
+					
+				}
+				
+				
+				
+				$("#add_user").change(function(){
+					let add_user=parseInt($("#add_user").val());
+					if(add_user<1){
+						add_user=1;
+					}else if(add_user>90){
+						add_user=90;
+					}
+					let money = add_user*30;
+					money=""+money;
+					$("#user_money").text("("+money+"元)");
+					$("#add_user").val(add_user);
+					
+				})
+				
+				$("#do_user").click(function(){
+					$.get("mine.json?type=adduser&num="+$("#add_user").val(),function(res){
+						res = JSON.parse(res);
+						if(res.code==1){
+							layer.alert(res.message, {icon:1});
+							$(".close").click();
+						}else{
+							layer.alert(res.message, {icon:2});
+						}
+					})
+				})
+				
+				
+				
+				$("#add_file").change(function(){
+					let add_file=parseInt($("#add_file").val());
+					if(add_file<1){
+						add_file=1;
+					}else if(add_file>200){
+						add_file=200;
+					}
+					let money = add_file*0.5;
+					money=""+money;
+					$("#file_money").text("("+money+"元)");
+					$("#add_file").val(add_file);
+					
+				})
+				
+				$("#do_file").click(function(){
+					$.get("mine.json?type=addfile&num="+$("#add_file").val(),function(res){
+						res = JSON.parse(res);
+						if(res.code==1){
+							layer.alert(res.message, {icon:1});
+							$(".close").click();
+						}else{
+							layer.alert(res.message, {icon:2});
+						}
+					})
+				})
+				
+				
+				$("#add_mail").change(function(){
+					let add_mail=parseInt($("#add_mail").val());
+					if(add_mail<1){
+						add_mail=1;
+					}else if(add_mail>10){
+						add_mail=10;
+					}
+					let money = add_mail*10;
+					money=""+money;
+					$("#mail_money").text("("+money+"元)");
+					$("#add_mail").val(add_mail);
+					
+				})
+				
+				$("#do_mail").click(function(){
+					$.get("mine.json?type=addmail&num="+$("#add_mail").val(),function(res){
+						res = JSON.parse(res);
+						if(res.code==1){
+							layer.alert(res.message, {icon:1});
+							$(".close").click();
+						}else{
+							layer.alert(res.message, {icon:2});
+						}
+					})
+				})
+				
+				
+				
+				
+				
+				$("#dilog_apikey").click(function(){
+					layer.alert('Key,用于接口通讯，具体用法请查看接口文档');
+				});
+				$("#dilog_token").click(function(){
+					layer.alert('Token,字符串加密参数，请勿对外透露！用法请查看接口文档');
+				});
+				$("#dilog_user").click(function(){
+					layer.alert('用户系统免费提供1000个用户容量，之后扩容需要付费。加1000为30元');
+				});
+				$("#dilog_mail").click(function(){
+					layer.alert('邮箱日志存储默认1W条，扩容价格10元1W');
+				});
+				$("#dilog_file").click(function(){
+					layer.alert('云盘默认赠送50m存储空间，永久加1m需要0.5元。云盘资源比较贵，所以卖的会比较贵一点，希望大家理解');
+				});
+				$.get("mine.json",function(res){
+					res = JSON.parse(res);
+					if(!res || res.code!=1){
+						$("#chart").css("display","none");
+					}else{
+						$("#chart").css("display","");
+						var chart_date = res.chart_date;
+						var chart_yesorder = res.chart_yesorder;
+						var chart_allorder = res.chart_allorder;
+						var chart_money = res.chart_money;
+						$("#haveorder").html(res.haveorder);
+						$("#haveuser").html(res.haveuser);
+						$("#money").html(res.money);
+						$("#online").html(res.online);
+						$("#apikey").val(res.apikey);
+						$("#token").val(res.token);
+						
+						let max_user=res.max_user+""+" ("+res.haveuser+")";
+						$("#max_user").val(max_user);
+						let max_mail=res.max_mail+""+" ("+res.havemail+")";
+						$("#max_mail").val(max_mail);
+						$("#max_file").val(renderSize(res.max_file));
+						
+						var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+					    var lineoption = {
+					        tooltip : {
+					            trigger: 'axis'
+					        },
+					        legend: {
+					            data:['活跃用户','签到用户','交易金额']
+					        },
+					        calculable : true,
+					        xAxis : [
+					            {
+					                type : 'category',
+					                boundaryGap : false,
+					                data : chart_date,
+					                axisLabel : {
+					                    formatter: '{value}号'
+					                }
+					            }
+					        ],
+					        yAxis : [
+					            {
+					                type : 'value',
+					                axisLabel : {
+					                    formatter: '{value}'
+					                }
+					            }
+					        ],
+					        series : [
+					            {
+					                name:'活跃用户',
+					                type:'line',
+					                data:chart_yesorder
+					            },
+					            {
+					                name:'签到用户',
+					                type:'line',
+					                data:chart_allorder
+					            },
+					            {
+					                name:'交易金额',
+					                type:'line',
+					                data:chart_money
+					            }
+					        ]
+					    };
+					    lineChart.setOption(lineoption);
+						
+					}
+					
+					
+				})
+				
+				
+				$("#gopay").click(function(){
+					let cz_money = $("#cz_money").val();
+					let cz_paytype = $("#cz_paytype").val();
+					if(cz_money<0.01){
+						layer.alert('最少充值0.01元', {icon:2});
+					}else if(cz_money>9999.99){
+						layer.alert('单次最多充值9999.99元', {icon:2});
+					}else{
+						
+						if(cz_paytype=="微信"){cz_paytype='wxpay';}
+						else if(cz_paytype=='支付宝'){cz_paytype='alipay';}
+						else{cz_paytype='qqpay';}
+						$(".close").click();
+						top.window.open('../pay.do?key=admin_pay&paytype='+cz_paytype+"&money="+cz_money+"&paymsg=账户充值");
+
+					}
+				});
+				
+				
+				
+				
+				
+				getinfo()
+				
+			    function getinfo(){
+			    	$.get("mine.json",function(res){
+						res = JSON.parse(res);
+						
+						var now = $("#money").text();
+						if(res.money>now){
+							var c=Math.ceil((res.money-$("#money").html())*100)/100;
+							layer.alert("充值成功！到账"+c+"元，请注意查收", {icon:1});
+						}
+						
+						var chart_date = res.chart_date;
+						var chart_yesorder = res.chart_yesorder;
+						var chart_allorder = res.chart_allorder;
+						var chart_money = res.chart_money;
+						$("#haveorder").html(res.haveorder);
+						$("#haveuser").html(res.haveuser);
+						$("#money").html(res.money);
+						$("#online").html(res.online);
+						$("#apikey").val(res.apikey);
+						$("#token").val(res.token);
+						let max_user=res.max_user+""+" ("+res.haveuser+")";
+						$("#max_user").val(max_user);
+						let max_mail=res.max_mail+""+" ("+res.havemail+")";
+						$("#max_mail").val(max_mail);
+						$("#max_file").val(renderSize(res.max_file));
+						setTimeout(function(){
+							getinfo();
+						},5000)
+					})
+			    }
+			    
+			    
+			    function renderSize(value){
+						    if(value==''){
+						        return "0k";
+						    }
+						    var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+						    var index=0,
+						    srcsize = parseFloat(value);
+						 	index=Math.floor(Math.log(srcsize)/Math.log(1024));
+						    var size =srcsize/Math.pow(1024,index);
+						    //  保留的小数位数
+						    size=size.toFixed(2);
+						    return size+unitArr[index];
+						}
+				
+			</script>
+			
+			
+			
+			
+
+		</div>
+
+
+		
+	</body>
+
+</html>

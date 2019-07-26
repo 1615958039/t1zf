@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>T1支付 - 登陆后台</title>
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		
+		<script src="src/js/base64.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<link href="../css/bootstrap.min.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css"/>
+		<link rel="stylesheet" href="../css/plugins.css" />
+		<link rel="stylesheet" href="../css/mina.css" />
+		<link rel="stylesheet" type="text/css" href="src/css/login.css"/>
+		
+		<!-- 插件层 -->
+		
+		<script src="../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.bootcss.com/babel-polyfill/6.23.0/polyfill.min.js" type="text/javascript" charset="utf-8"></script>
+		<!-- END -->
+		
+		 
+	</head>
+	
+	<body>
+		<img src="../img/login-background.jpg" alt="Full Background" class="full-bg full-bg-bottom animated pulse" ondragstart="return false;" oncontextmenu="return false;" />
+		<div id="app" class="col-xs-12 col-sm-10 col-md-8 col-lg-4 center-block " style="float: none;">
+			<br><br><br>
+			<div class="widget" v-show="ui_type==1">
+				<div class="block">
+					<h3 style="text-align: center;">登陆账号</h3>
+					<h3>
+						<div class="input-group" style="margin-top: 12px;height: 40px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-user" style="color: #5ccdde;"></span>
+							</div>
+							<input id="login_user" max="11" type="tel" v-model="login_user" style="height: 40px;" name="user" class="form-control" placeholder="手机号" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;height: 40px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-lock" style="color: #5ccdde;"></span>
+							</div>
+							<input id="login_pass" max="16" v-model="login_pass" style="height: 40px;" type="password" name="pass" class="form-control" required="required" placeholder="密码" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;height: 40px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-link" style="color: #5ccdde;"></span>
+							</div>
+							<input @keyup.enter="login" id="login_code" max="4" v-model="login_code" style="height: 40px;" type="tel" name="code" class="form-control" required="required" placeholder="验证码" />
+							<div @click="get_randimg" :class="{'input-group-addon':true,'rand':true}" :style="{'backgroundImage': imgcode_1}"></div>
+						</div>
+						<div class="form-group" style="margin-top: 20px;">
+							<input @click="login" type="submit" :value="login_btn_text" class="btn btn-primary btn-block" />
+						</div>
+						<div class="foottext">
+							<a @click="go(3)">忘记密码</a>
+							<a @click="go(2)">免费注册</a>
+						</div>
+						
+       				</h3>
+				</div>
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			<div class="widget" v-show="ui_type==2">
+				<div class="block">
+					<h3 style="text-align: center;">注册账号</h3>
+					<h3> 
+						<div  class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-user" style="color: #5ccdde;"></span>
+							</div>
+							<input max="11" id="reg_user" :disabled="reg_input_dis" v-model="reg_user" style="height: 40px;" type="text" name="user" value="" class="form-control" required="required" placeholder="手机号码" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-lock" style="color: #5ccdde;"></span>
+							</div>
+							<input max="16" id="reg_pass" :disabled="reg_input_dis" v-model="reg_pass" style="height: 40px;" type="password" name="pass" class="form-control" required="required" placeholder="密码" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-link" style="color: #5ccdde;"></span>
+							</div>
+							<input max="4" id="reg_randcode"  v-model="reg_randcode" style="height: 40px;" type="tel" name="code" class="form-control" required="required" placeholder="验证码" />
+							<div @click="get_randimg" class="input-group-addon rand" :style="{'backgroundImage': imgcode_2}"></div>
+						</div>
+						<div class="input-group login-ipt" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-phone" style="color: #5ccdde;"></span>
+							</div>
+							<input max="6" type="tel" v-model="reg_telcode" id="reg_telcode" maxlength="6" onkeyup="this.value=this.value.replace(/[^\w_]/g,'');" type="text" class="form-control" placeholder="短信验证码" style="height: 40px;" />
+							<div @click="reg_send" class="code input-group-addon regc">
+								{{reg_tel_word}}
+							</div>
+						</div>
+						<div class="form-group" style="margin-top: 20px;">
+							<input @click="reg" type="submit" :value="reg_btn_text" class="btn btn-primary btn-block" />
+						</div>
+						<div style="margin-top: 5px;font-size:15px;display: flex;justify-content: space-between;flex-direction: row;">
+							<a @click="go(1)"> 返回登陆 </a>
+						</div>
+					</h3>
+				</div>
+			</div>
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			<div id="pass" class="widget" v-show="ui_type==3">
+				<div class="block">
+					<h3 style="text-align: center;">重设密码</h3>
+					<h3>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-user" style="color: #5ccdde;"></span>
+							</div>
+							<input :disabled="forget_input_dis" id="forget_user" v-model="forget_user" style="height: 40px;" type="text" name="user" value="" class="form-control" required="required" placeholder="手机号码" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-link" style="color: #5ccdde;"></span>
+							</div>
+							<input id="forget_randcode" v-model="forget_randcode" style="height: 40px;" type="tel" name="code" class="form-control" required="required" placeholder="验证码" />
+							<div @click="get_randimg" class="input-group-addon rand" :style="{'backgroundImage': imgcode_3}"></div>
+						</div>
+						<div class="input-group login-ipt" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-phone" style="color: #5ccdde;"></span>
+							</div>
+							<input id="forget_telcode" v-model="forget_telcode" maxlength="6" name="telcode" id="pass_tel_code" type="tel" class="form-control" placeholder="短信验证码" style="height: 40px;" />
+							<div @click="forget_send" class="code input-group-addon regc">
+								{{forget_tel_word}}
+							</div>
+						</div>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-lock" style="color: #5ccdde;"></span>
+							</div>
+							<input id="forget_pass" v-model="forget_pass" style="height: 40px;" type="password" name="pass1" class="form-control" required="required" placeholder="新密码" />
+						</div>
+						<div class="input-group" style="margin-top: 12px;">
+							<div class="input-group-addon">
+								<span class="glyphicon glyphicon-lock" style="color: #5ccdde;"></span>
+							</div>
+							<input id="forget_pas2" v-model="forget_pas2" style="height: 40px;" type="password" name="pass2" class="form-control" required="required" placeholder="重复输入密码" />
+						</div>
+						<div class="form-group" style="margin-top: 20px;">
+							<input @click="forget" type="submit" :value="forget_btn_text" class="btn btn-primary btn-block" />
+						</div>
+						<div style="margin-top: 5px;font-size:15px;display: flex;justify-content: space-between;flex-direction: row;">
+							<a @click="go(1)"> 返回登陆 </a>
+						</div>
+      		 		</h3>
+				</div>
+			</div>
+		</div>
+		<script>
+		!function(n){"use strict";function t(n,t){var r=(65535&n)+(65535&t);return(n>>16)+(t>>16)+(r>>16)<<16|65535&r}function r(n,t){return n<<t|n>>>32-t}function e(n,e,o,u,c,f){return t(r(t(t(e,n),t(u,f)),c),o)}function o(n,t,r,o,u,c,f){return e(t&r|~t&o,n,t,u,c,f)}function u(n,t,r,o,u,c,f){return e(t&o|r&~o,n,t,u,c,f)}function c(n,t,r,o,u,c,f){return e(t^r^o,n,t,u,c,f)}function f(n,t,r,o,u,c,f){return e(r^(t|~o),n,t,u,c,f)}function i(n,r){n[r>>5]|=128<<r%32,n[14+(r+64>>>9<<4)]=r;var e,i,a,d,h,l=1732584193,g=-271733879,v=-1732584194,m=271733878;for(e=0;e<n.length;e+=16)i=l,a=g,d=v,h=m,g=f(g=f(g=f(g=f(g=c(g=c(g=c(g=c(g=u(g=u(g=u(g=u(g=o(g=o(g=o(g=o(g,v=o(v,m=o(m,l=o(l,g,v,m,n[e],7,-680876936),g,v,n[e+1],12,-389564586),l,g,n[e+2],17,606105819),m,l,n[e+3],22,-1044525330),v=o(v,m=o(m,l=o(l,g,v,m,n[e+4],7,-176418897),g,v,n[e+5],12,1200080426),l,g,n[e+6],17,-1473231341),m,l,n[e+7],22,-45705983),v=o(v,m=o(m,l=o(l,g,v,m,n[e+8],7,1770035416),g,v,n[e+9],12,-1958414417),l,g,n[e+10],17,-42063),m,l,n[e+11],22,-1990404162),v=o(v,m=o(m,l=o(l,g,v,m,n[e+12],7,1804603682),g,v,n[e+13],12,-40341101),l,g,n[e+14],17,-1502002290),m,l,n[e+15],22,1236535329),v=u(v,m=u(m,l=u(l,g,v,m,n[e+1],5,-165796510),g,v,n[e+6],9,-1069501632),l,g,n[e+11],14,643717713),m,l,n[e],20,-373897302),v=u(v,m=u(m,l=u(l,g,v,m,n[e+5],5,-701558691),g,v,n[e+10],9,38016083),l,g,n[e+15],14,-660478335),m,l,n[e+4],20,-405537848),v=u(v,m=u(m,l=u(l,g,v,m,n[e+9],5,568446438),g,v,n[e+14],9,-1019803690),l,g,n[e+3],14,-187363961),m,l,n[e+8],20,1163531501),v=u(v,m=u(m,l=u(l,g,v,m,n[e+13],5,-1444681467),g,v,n[e+2],9,-51403784),l,g,n[e+7],14,1735328473),m,l,n[e+12],20,-1926607734),v=c(v,m=c(m,l=c(l,g,v,m,n[e+5],4,-378558),g,v,n[e+8],11,-2022574463),l,g,n[e+11],16,1839030562),m,l,n[e+14],23,-35309556),v=c(v,m=c(m,l=c(l,g,v,m,n[e+1],4,-1530992060),g,v,n[e+4],11,1272893353),l,g,n[e+7],16,-155497632),m,l,n[e+10],23,-1094730640),v=c(v,m=c(m,l=c(l,g,v,m,n[e+13],4,681279174),g,v,n[e],11,-358537222),l,g,n[e+3],16,-722521979),m,l,n[e+6],23,76029189),v=c(v,m=c(m,l=c(l,g,v,m,n[e+9],4,-640364487),g,v,n[e+12],11,-421815835),l,g,n[e+15],16,530742520),m,l,n[e+2],23,-995338651),v=f(v,m=f(m,l=f(l,g,v,m,n[e],6,-198630844),g,v,n[e+7],10,1126891415),l,g,n[e+14],15,-1416354905),m,l,n[e+5],21,-57434055),v=f(v,m=f(m,l=f(l,g,v,m,n[e+12],6,1700485571),g,v,n[e+3],10,-1894986606),l,g,n[e+10],15,-1051523),m,l,n[e+1],21,-2054922799),v=f(v,m=f(m,l=f(l,g,v,m,n[e+8],6,1873313359),g,v,n[e+15],10,-30611744),l,g,n[e+6],15,-1560198380),m,l,n[e+13],21,1309151649),v=f(v,m=f(m,l=f(l,g,v,m,n[e+4],6,-145523070),g,v,n[e+11],10,-1120210379),l,g,n[e+2],15,718787259),m,l,n[e+9],21,-343485551),l=t(l,i),g=t(g,a),v=t(v,d),m=t(m,h);return[l,g,v,m]}function a(n){var t,r="",e=32*n.length;for(t=0;t<e;t+=8)r+=String.fromCharCode(n[t>>5]>>>t%32&255);return r}function d(n){var t,r=[];for(r[(n.length>>2)-1]=void 0,t=0;t<r.length;t+=1)r[t]=0;var e=8*n.length;for(t=0;t<e;t+=8)r[t>>5]|=(255&n.charCodeAt(t/8))<<t%32;return r}function h(n){return a(i(d(n),8*n.length))}function l(n,t){var r,e,o=d(n),u=[],c=[];for(u[15]=c[15]=void 0,o.length>16&&(o=i(o,8*n.length)),r=0;r<16;r+=1)u[r]=909522486^o[r],c[r]=1549556828^o[r];return e=i(u.concat(d(t)),512+8*t.length),a(i(c.concat(e),640))}function g(n){var t,r,e="";for(r=0;r<n.length;r+=1)t=n.charCodeAt(r),e+="0123456789abcdef".charAt(t>>>4&15)+"0123456789abcdef".charAt(15&t);return e}function v(n){return unescape(encodeURIComponent(n))}function m(n){return h(v(n))}function p(n){return g(m(n))}function s(n,t){return l(v(n),v(t))}function C(n,t){return g(s(n,t))}function A(n,t,r){return t?r?s(t,n):C(t,n):r?m(n):p(n)}"function"==typeof define&&define.amd?define(function(){return A}):"object"==typeof module&&module.exports?module.exports=A:n.md5=A}(this);
+		</script>
+		<script type="text/javascript">
+			function setCookie(name,value,Days){
+				var exp = new Date();
+				exp.setTime(exp.getTime() + Days*24*60*60*1000);
+				document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+			}
+			function getCookie(name){
+				var arr,reg=new RegExp("(^| )"+name+"=([^;]*)(;|$)");
+				if(arr=document.cookie.match(reg))
+					return unescape(arr[2]);
+				else
+					return null;
+			}
+			var vm = new Vue({
+				el:"#app",
+				data:{
+					ui_type:1, // 1登陆 2注册 3找回
+					
+					login_user:'',
+					login_pass:'',
+					login_code:'',
+					login_btn_text:'登陆',
+					
+					reg_user:'',
+					reg_pass:'',
+					reg_randcode:'',
+					reg_telcode:'',
+					reg_tel_c:true,
+					reg_tel_word:'获取',
+					reg_btn_text:'注册',
+					reg_input_dis:false,
+					
+					
+					forget_user:'',
+					forget_randcode:'',
+					forget_telcode:'',
+					forget_pass:'',
+					forget_pas2:'',
+					forget_tel_c:true,
+					forget_tel_word:'获取',
+					forget_btn_text:'确认',
+					forget_input_dis:false,
+					
+					
+					imgcode_1:"url(../../randcode.img)",
+					imgcode_2:'',
+					imgcode_3:'',
+				},
+				methods:{
+					login(){
+						if(this.login_btn_text=="登陆"){
+							
+							if(this.login_user=="" || this.login_user<10000000000 || this.login_user>20000000000){
+								layer.tips('请输入正确的手机号码', '#login_user', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.login_pass == "" || this.login_pass.length < 6 || this.login_pass.length > 16){
+								layer.tips('密码格式错误(6-16位字符)', '#login_pass', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.login_code.length != 4){
+								layer.tips('请输入正确的验证码', '#login_code', {tips: [1, '#f0ad4e'],time: 3000});
+							}else{
+								var __encode ='sojson.com', _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(window);var __Ox29cef=["\x6C\x6F\x67\x69\x6E\x5F\x75\x73\x65\x72","","\x6C\x6F\x67\x69\x6E\x5F\x70\x61\x73\x73","\x6C\x6F\x67\x69\x6E\x5F\x63\x6F\x64\x65","\x65\x6E\x63\x6F\x64\x65"];let _= new Base64();let data=_[__Ox29cef[0x4]](_[__Ox29cef[0x4]](_[__Ox29cef[0x4]](_[__Ox29cef[0x4]](_[__Ox29cef[0x4]](this[__Ox29cef[0x0]]+ __Ox29cef[0x1]+ this[__Ox29cef[0x2]]+ __Ox29cef[0x1]+ this[__Ox29cef[0x3]]+ __Ox29cef[0x1])))));
+								let that = this;
+								that.login_btn_text="登陆中...";
+								this.$http.post('../login.do?type=login', {data:data}).then(function(res) {
+									if(res.data.code == 1) {
+										that.login_btn_text="登陆成功！";
+										setCookie('login_user',that.login_user,'30');
+										setTimeout(function(){
+											location.href="../";
+										},1000);
+									}  else if(res.data.code == 2) {
+										let time = new Date;
+										that.imgcode_1 = "url(../../randcode.img?time=" + time.getTime() + ")";
+										that.login_code='';
+										that.login_btn_text="登陆";
+										layer.alert(res.data.message, {icon: 0});
+									}  else if(res.data.code == 3) {
+										that.login_btn_text="您已登陆！";
+										setTimeout(function(){
+											location.href="../";
+										},1000);
+									} else {
+										that.login_btn_text="登陆";
+										layer.alert(res.data.message, {icon: 0});
+									}
+								}, function() {
+									that.login_btn_text="登陆";
+									layer.alert('服务器链接失败！请检查您的网络设置', {
+										icon: 2
+									});
+								});
+							}
+						}
+					},
+					forget(){
+						if(this.forget_btn_text=="确认"){
+							if(this.forget_user=="" || this.forget_user<10000000000 || this.forget_user>20000000000){
+								layer.tips('请输入正确的手机号码', '#forget_user', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.forget_telcode == "" || this.forget_telcode.length != 6){
+								layer.tips('请输入正确的短信验证码', '#forget_telcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.forget_pass == "" || this.forget_pass.length < 6 || this.forget_pass.length > 16){
+								layer.tips('密码格式错误(6-16位字符)', '#forget_pass', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.forget_pass != this.forget_pas2){
+								layer.tips('两次输入的密码不同', '#forget_pas2', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.forget_randcode == "" || this.forget_randcode.length != 4){
+								layer.tips('请输入正确的图形验证码', '#forget_randcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else{
+								this.forget_btn_text = "重设中...";
+								let that = this;
+								this.$http.post('../login.do?type=forget_yes',{
+									user:this.forget_user,
+									pass:this.forget_pass,
+									pas2:this.forget_pas2,
+									telcode:this.forget_telcode
+								}).then(function(res){
+									if(res.data.code==1){
+										that.forget_user='';
+										that.forget_pass='';
+										that.forget_pas2='';
+										that.forget_randcode='';
+										that.forget_telcode='';
+										that.forget_tel_c=true;
+										that.forget_tel_word='获取';
+										that.forget_btn_text='确认';
+										that.forget_input_dis=false;
+										let goto1 = layer.alert(res.data.message,{icon:1},function(){
+											let time = new Date;
+											that.imgcode_1 = "url(../../randcode.img?time=" + time.getTime() + ")";
+											that.login_code = '';
+											that.ui_type=1;
+											parent.layer.close(goto1);
+										});
+									}else{
+										this.forget_btn_text = "确认";
+										layer.alert(res.data.message,{icon:0});
+									}
+								},function(){
+									this.forget_btn_text = "确认";
+									layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+								});
+							}
+						}
+					},
+					reg(){
+						if(this.reg_btn_text=="注册"){
+							if(this.reg_user=="" || this.reg_user<10000000000 || this.reg_user>20000000000){
+								layer.tips('请输入正确的手机号码', '#reg_user', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.reg_pass == "" || this.reg_pass.length < 6 || this.reg_pass.length > 16){
+								layer.tips('密码格式错误(6-16位字符)', '#reg_pass', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.reg_randcode == "" || this.reg_randcode.length != 4){
+								layer.tips('请输入正确的图形验证码', '#reg_randcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.reg_telcode == "" || this.reg_telcode.length != 6){
+								layer.tips('请输入正确的短信验证码', '#reg_telcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else{
+								this.reg_btn_text = "注册中...";
+								let that = this;
+								this.$http.get('../login.do?type=reg_yes&telcode='+this.reg_telcode).then(function(res){
+									if(res.data.code==1){
+										that.reg_user='';
+										that.reg_pass='';
+										that.reg_randcode='';
+										that.reg_telcode='';
+										that.reg_tel_c=true;
+										that.reg_tel_word='获取';
+										that.reg_btn_text='注册';
+										that.reg_input_dis=false;
+										let goto1 = layer.alert(res.data.message,{icon:1},function(){
+											let time = new Date;
+											that.imgcode_1 = "url(../../randcode.img?time=" + time.getTime() + ")";
+											that.login_code = '';
+											that.ui_type=1;
+											parent.layer.close(goto1);
+										});
+									}else{
+										this.reg_btn_text = "注册";
+										layer.alert(res.data.message,{icon:0});
+									}
+								},function(){
+									this.reg_btn_text = "注册";
+									layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+								});
+							}
+						}
+					},
+					go(id){
+						let time = new Date;
+						if(id == 1) {
+							this.imgcode_1 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.login_code='';
+						} else if(id == 2) {
+							this.imgcode_2 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.reg_randcode='';
+						} else {
+							this.imgcode_3 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.forget_randcode='';
+						}
+						this.ui_type = id;
+					},
+					get_randimg(){
+						let time = new Date;
+						if(this.ui_type == "1") {
+							this.imgcode_1 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.login_code='';
+						} else if(this.ui_type == "2") {
+							this.imgcode_2 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.reg_randcode='';
+						} else {
+							this.imgcode_3 = "url(../../randcode.img?time=" + time.getTime() + ")";
+							this.forget_randcode='';
+						}
+						
+					},
+					reg_send(){
+						if(this.reg_tel_c==true){
+							var that = this;
+							if(this.reg_user=="" || this.reg_user<10000000000 || this.reg_user>20000000000){
+								layer.tips('请输入正确的手机号码', '#reg_user', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.reg_pass == "" || this.reg_pass.length < 6 || this.reg_pass.length > 16){
+								layer.tips('密码格式错误(6-16位字符)', '#reg_pass', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.reg_randcode == "" || this.reg_randcode.length != 4){
+								layer.tips('请输入正确的图形验证码', '#reg_randcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else{
+								var __encode ='sojson.com', _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(window);var __Ox331f3=["\x72\x65\x67\x5F\x75\x73\x65\x72","","\x72","\x72\x65\x70\x6C\x61\x63\x65","\x74","\x67","\x61","\x78","\x6D","\x70","\x71","\x6B","\x7A","\x31\u6770\x32"];var a=that[__Ox331f3[0x0]];a= a* 1;a= (a+ 123456781232)* 11;a= a+ __Ox331f3[0x1];a= a[__Ox331f3[0x3]](/1/g,__Ox331f3[0x2]);a= a[__Ox331f3[0x3]](/2/g,__Ox331f3[0x4]);a= a[__Ox331f3[0x3]](/3/g,__Ox331f3[0x5]);a= a[__Ox331f3[0x3]](/4/g,__Ox331f3[0x6]);a= a[__Ox331f3[0x3]](/5/g,__Ox331f3[0x7]);a= a[__Ox331f3[0x3]](/6/g,__Ox331f3[0x8]);a= a[__Ox331f3[0x3]](/7/g,__Ox331f3[0x9]);a= a[__Ox331f3[0x3]](/8/g,__Ox331f3[0xa]);a= a[__Ox331f3[0x3]](/9/g,__Ox331f3[0xb]);a= a[__Ox331f3[0x3]](/0/g,__Ox331f3[0xc]);a= a+ __Ox331f3[0x1];var token=md5(a+ __Ox331f3[0xd])
+								this.$http.post('../login.do?type=reg_getTelcode',{
+									'user':a,
+									'pass':this.reg_pass,
+									'randcode':this.reg_randcode,
+									'token':token,
+								}).then(function(res) {
+									if(res.data.code=="1"){	//发短信成功
+										this.reg_input_dis=true;
+										layer.alert('短信验证码发送成功',{icon:1});
+										var i = 60;
+										that = this;
+										that.reg_tel_c = false;
+										var set = setInterval(function() {
+											i--;
+											if(i < 1) {
+												that.reg_tel_c = true;
+												that.reg_tel_word = "获取";
+												clearInterval(set);
+											} else {
+												that.reg_tel_word = i + "s";
+											}
+										}, 1000);
+									}else if(res.data.code==2){
+										let time = new Date;
+										that.imgcode_2 = "url(../../randcode.img?time=" + time.getTime() + ")";
+										that.reg_randcode='';
+										layer.alert(res.data.message,{icon:0});
+									}else{
+										layer.alert(res.data.message,{icon:0});
+									}
+								}, function() {
+									layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+								});	
+							}
+						}
+					},
+					forget_send(){
+						if(this.forget_tel_c==true){
+							var that = this;
+							if(this.forget_user=="" || this.forget_user<10000000000 || this.forget_user>20000000000){
+								layer.tips('请输入正确的手机号码', '#forget_user', {tips: [1, '#f0ad4e'],time: 3000});
+							}else if(this.forget_randcode == "" || this.forget_randcode.length != 4){
+								layer.tips('请输入正确的图形验证码', '#forget_randcode', {tips: [1, '#f0ad4e'],time: 3000});
+							}else{
+								this.$http.post('../login.do?type=forget_getTelcode',{
+									'user':this.forget_user,
+									'randcode':this.forget_randcode
+								}).then(function(res) {
+									if(res.data.code=="1"){	//发短信成功
+										this.forget_input_dis=true;
+										layer.alert('短信验证码发送成功',{icon:1});
+										var i = 60;
+										that = this;
+										that.forget_tel_c = false;
+										var set = setInterval(function() {
+											i--;
+											if(i < 1) {
+												that.forget_tel_c = true;
+												that.forget_tel_word = "获取";
+												clearInterval(set);
+											} else {
+												that.forget_tel_word = i + "s";
+											}
+										}, 1000);
+									}else if(res.data.code==2){
+										let time = new Date;
+										that.imgcode_3 = "url(../../randcode.img?time=" + time.getTime() + ")";
+										that.forget_randcode='';
+										layer.alert(res.data.message,{icon:0});
+									}else{
+										layer.alert(res.data.message,{icon:0});
+									}
+								}, function() {
+									layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+								});	
+							}
+						}
+					}
+				},
+				mounted(){
+					var user = getCookie("login_user");
+					if(user!='' && pass!=''){
+						this.login_user = user;
+					} 
+				}
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>支付订单</title>
+
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css" />
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+
+				<div class="col-sm-12" v-show="page==1">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>商品列表</h5>
+							<div class="ibox-tools">
+								<a @click="page=2" class="collapse-link">
+									<i class="glyphicon glyphicon-plus-sign"></i>添加
+								</a>
+							</div>
+						</div>
+						<div class="ibox-content">
+
+							
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>ID</th>
+											<th>标题/备注</th>
+											<th>单价</th>
+											<th>已售/库存</th>
+											<th>事件/添加日期</th>
+											<th>状态</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in items">
+											<th>{{ item.id }}</th>
+											<th>{{ item.title }}<br>{{ item.addmsg }}</th>
+											<th>{{ item.money }}</th>
+											<th>{{ item.sell }}<br>{{ item.havenum }}</th>
+											<th>{{ item.dowhat }}<br>{{ item.addtime }}</th>
+											<th>{{ item.zt }}</th>
+											
+											<th>
+
+												<!--<span class="badge badge-info">详情</span>-->
+												
+												<span class="badge badge-primary" @click="sel(item.id)"><span class="glyphicon glyphicon-edit"></span></span>
+												
+
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~ (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<div class="col-sm-12" v-show="page==2">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="page=1;empty()"><i class="glyphicon glyphicon-menu-left"></i>返回&nbsp;</span>|&nbsp;添加商品
+							
+							</h5>
+						</div>
+						<div class="ibox-content">
+			
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">标题&名称</label>
+									<div class="col-sm-10">
+										<input v-model="add_title" placeholder="10个字符以内" maxlength="10" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">商品单价(元)</label>
+									<div class="col-sm-10">
+										<input v-model="add_money"  type="tel" placeholder="0.01 - 9999.99" class="form-control">
+									</div>
+								</div>
+								
+								
+								<div class="form-group" v-show="dowhat!='自动发货'">
+									<label class="col-sm-2 control-label">商品库存(个)</label>
+									<div class="col-sm-10">
+										<input v-model="add_havenum"  type="tel" placeholder="1 - 99999999" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">商品备注(非必填)</label>
+									<div class="col-sm-10">
+										<input v-model="add_msg" placeholder="用户可见" maxlength="200" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">动作</label>
+									<div class="col-sm-10">
+										<select class="form-control m-b" v-model="dowhat">
+											<option v-for="op1 in dowhati" @click="dowhat=op1">
+												{{op1}}
+											</option>
+										</select>
+										<span v-show="dowhat=='自动发货'" class="help-block m-b-none"><i class="fa fa-info-circle"></i> 添加商品后在商品详情页面添加和管理货物</span>
+									</div>
+								</div>
+								 
+								
+								<div v-show="dowhat=='POST对接'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Url(get值)</label>
+										<div class="col-sm-10">
+											<input v-model="add_geturl"  type="tel" placeholder="完整的URL，例https://baidu.com/" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Post</label>
+										<div class="col-sm-10">
+											<input v-model="add_getpost"  type="tel" placeholder="以&分割数据" class="form-control">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Cookie</label>
+										<div class="col-sm-10">
+											<input v-model="add_getcookie"  type="tel" placeholder="勿超过200字符" class="form-control">
+											<p class="help-block m-b-none">
+												Post对接说明：
+												<br>可添加变量，对接时可传输变量的值，变量以‘<b>{{demo1}}</b>’定义，传输时变量用json格式放在model内
+												<br>例Get：<font color="#23c6c8"><b>http://a.cn/qqnum={{demo2}}&{{demo3}}={{demo4}}</b></font>
+												<br>传输变量:<font color="#23c6c8"><b>{"qq":10001,"key":"建","val":"值"}</b></font>
+												<br>系统将解析获得http://a.cn/qqnum=10001&建=值
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								
+								<div v-show="dowhat=='亿乐社区'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">亿乐社区域名</label>
+										<div class="col-sm-10">
+											<input v-model="add_ylurl"  type="text" placeholder="域名，例jiegege.000sq.cn" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">TokenID</label>
+										<div class="col-sm-10">
+											<input  v-model="add_yltkid"  type="tel" placeholder="用户中心获取" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">密钥</label>
+										<div class="col-sm-10">
+											<input v-model="add_ylkey"  type="text" placeholder="32位字符" class="form-control">
+											
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">商品编号</label>
+										<div class="col-sm-10">
+											<input v-model="add_ylgid"  type="tel" placeholder="商品gid,例1001" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">下单基数</label>
+										<div class="col-sm-10">
+											<input v-model="add_ylnum" type="text" placeholder="默认填1即可" class="form-control">
+											<p class="help-block m-b-none">
+												社区商品说明：
+												<br>1、id和密钥在社区个人中心获取
+												<br>2、需要设置白名单ip:<font color="#23c6c8">{{serverip}}</font>
+												<br>3、最终用户下单数量=下单基数*下单数量
+												<br>4、亿乐的下单手机号QQ网址等一个输入框的参数为value1,2个输入框则为value1和value2,最多可提交6个下单参数
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								<div v-show="dowhat=='用户系统充值余额'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">支付1元将到账</label>
+										<div class="col-sm-10">
+											<input  v-model="add_czmoney"  type="text" placeholder="默认为1" class="form-control">
+											<p class="help-block m-b-none">
+												用户余额充值说明：
+												<br>充值1元默认用户到账1元，可填0.01-99之间。例如填2，则用户充值1元将到账2元
+												<br>上面的单价金额失效，金额以这里的到账比例为准
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								
+								<div v-show="dowhat=='用户系统购买VIP'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">VIP1月价格</label>
+										<div class="col-sm-10">
+											<input v-model="add_czvip" type="tel" placeholder="单位元" class="form-control">
+											
+											<p class="help-block m-b-none">
+												vip开通说明：
+												<br>默认一个月为31天
+												<br>上面的单价金额失效，金额以这里的1月价格比例为准
+											</p>
+											
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								
+								<div class="form-group">
+									<div class="col-sm-4 col-sm-offset-2">
+										<button @click="add" class="btn btn-primary" type="submit">添加</button>
+										<button @click="empty" class="btn btn-white" type="submit">清空</button>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<!--  数据编辑  -->
+				
+				
+				<div class="col-sm-12" v-show="page==3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="page=1;empty2()"><i class="glyphicon glyphicon-menu-left"></i>返回&nbsp;</span>
+								|&nbsp;编辑商品( id = <font color="red">{{ sel_goodsid }}</font>)
+								<span @click="del(sel_goodsid)" class="badge badge-warning"><span class="fa fa-trash"></span>删除</span>
+								
+							</h5>
+						</div>
+						<div class="ibox-content">
+			
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">标题&名称</label>
+									<div class="col-sm-10">
+										<input v-model="sel_title" placeholder="10个字符以内" maxlength="10" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">商品单价(元)</label>
+									<div class="col-sm-10">
+										<input v-model="sel_money"  type="tel" placeholder="0.01 - 9999.99" class="form-control">
+									</div>
+								</div>
+								
+								
+								<div class="form-group" v-show="sel_dowhat!='自动发货'">
+									<label class="col-sm-2 control-label">商品库存(个)</label>
+									<div class="col-sm-10">
+										<input v-model="sel_havenum"  type="tel" placeholder="1 - 99999999" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group" v-show="sel_dowhat!='自动发货'">
+									<label class="col-sm-2 control-label">已出售(个)</label>
+									<div class="col-sm-10">
+										<input v-model="sel_sell"  type="tel" placeholder="1 - 99999999" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">商品备注(非必填)</label>
+									<div class="col-sm-10">
+										<input v-model="sel_addmsg" placeholder="用户可见" maxlength="200" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">商品状态</label>
+									<div class="col-sm-10">
+										<select class="form-control m-b" v-model="sel_zt">
+											<option v-for="ztl in sel_ztlist" @click="sel_zt=ztl">
+												{{ztl}}
+											</option>
+										</select>
+									</div>
+								</div>
+								
+								<div class="form-group" v-show="sel_dowhat!='自动发货'">
+									<label class="col-sm-2 control-label">动作</label>
+									<div class="col-sm-10">
+										<select class="form-control m-b" v-model="sel_dowhat">
+											<option v-for="op1 in dowhati" @click="sel_dowhat=op1">
+												{{op1}}
+											</option>
+										</select>
+									</div>
+								</div>
+								
+								<div v-show="sel_dowhat=='自动发货'">
+									
+									<div class="hr-line-dashed"></div>
+									<div class="form-group">
+										<div class="col-sm-2"></div>
+										<div class="col-sm-10">
+											<a @click="km(sel_goodsid)"><i class="fa fa-calendar"></i> 点我前往管理库存</a>
+										</div>
+									</div>
+									
+									<div class="hr-line-dashed"></div>
+									
+								</div>
+								<div v-show="sel_dowhat=='POST对接'">
+									
+									<div class="hr-line-dashed"></div>
+									 
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Url(get值)</label>
+										<div class="col-sm-10">
+											<input v-model="sel_geturl"  type="tel" placeholder="完整的URL，例https://baidu.com/" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Post</label>
+										<div class="col-sm-10">
+											<input v-model="sel_getpost"  type="tel" placeholder="以&分割数据" class="form-control">
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label">Cookie</label>
+										<div class="col-sm-10">
+											<input v-model="sel_getcookie"  type="tel" placeholder="勿超过200字符" class="form-control">
+											<p class="help-block m-b-none">
+												Post对接说明：
+												<br>可添加变量，对接时可传输变量的值，变量以‘<b>{{demo1}}</b>’定义，传输时变量用json格式放在model内
+												<br>例Get：<font color="#23c6c8"><b>http://a.cn/qqnum={{demo2}}&{{demo3}}={{demo4}}</b></font>
+												<br>传输变量:<font color="#23c6c8"><b>{"qq":10001,"key":"建","val":"值"}</b></font>
+												<br>系统将解析获得http://a.cn/qqnum=10001&建=值
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								<div v-show="sel_dowhat=='亿乐社区'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">亿乐社区域名</label>
+										<div class="col-sm-10">
+											<input v-model="sel_ylurl"  type="text" placeholder="域名，例jiegege.000sq.cn" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">TokenID</label>
+										<div class="col-sm-10">
+											<input  v-model="sel_yltkid"  type="tel" placeholder="用户中心获取" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">密钥</label>
+										<div class="col-sm-10">
+											<input v-model="sel_ylkey"  type="text" placeholder="32位字符" class="form-control">
+											
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">商品编号</label>
+										<div class="col-sm-10">
+											<input v-model="sel_ylgid"  type="tel" placeholder="商品gid,例1001" class="form-control">
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">下单基数</label>
+										<div class="col-sm-10">
+											<input v-model="sel_ylnum" type="text" placeholder="默认填1即可" class="form-control">
+											<p class="help-block m-b-none">
+												社区商品说明：
+												<br>1、id和密钥在社区个人中心获取
+												<br>2、需要设置白名单ip:<font color="#23c6c8">{{serverip}}</font>
+												<br>3、最终用户下单数量=下单基数*下单数量
+												<br>4、亿乐的下单手机号QQ网址等一个输入框的参数为value1,2个输入框则为value1和value2,最多可提交6个下单参数
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								<div v-show="sel_dowhat=='用户系统充值余额'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">支付1元将到账</label>
+										<div class="col-sm-10">
+											<input  v-model="sel_czmoney"  type="text" placeholder="默认为1" class="form-control">
+											<p class="help-block m-b-none">
+												用户余额充值说明：
+												<br>充值1元默认用户到账1元，可填0.01-99之间。例如填2，则用户充值1元将到账2元
+												<br>上面的单价金额失效，金额以这里的到账比例为准
+											</p>
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								
+								
+								<div v-show="sel_dowhat=='用户系统购买VIP'">
+									
+									<div class="hr-line-dashed"></div>
+									
+									<div class="form-group">
+										<label class="col-sm-2 control-label">VIP1月价格</label>
+										<div class="col-sm-10">
+											<input v-model="sel_czvip" type="tel" placeholder="单位元" class="form-control">
+											
+											<p class="help-block m-b-none">
+												vip开通说明：
+												<br>默认一个月为31天
+												<br>上面的单价金额失效，金额以这里的1月价格比例为准
+											</p>
+											
+										</div>
+									</div>
+									
+									
+									
+									<div class="hr-line-dashed"></div>
+								</div>
+								
+								<div class="form-group">
+									<div class="col-sm-4 col-sm-offset-2">
+										<button @click="sel_edu" class="btn btn-primary" type="submit">保存</button>
+										<button @click="empty2" class="btn btn-white" type="submit">清空</button>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					page:'1',
+					items: [],
+					serverip:'0.0.0.0',
+					
+					
+					dowhat:'POST对接',
+					dowhati:['POST对接','亿乐社区','用户系统充值余额','用户系统购买VIP','自动发货'],
+					add_title:'',
+					add_msg:'',
+					add_money:'',
+					add_havenum:'',
+					
+					add_geturl:'',
+					add_getpost:'',
+					add_getcookie:'',
+					
+					add_ylurl:'',
+					add_yltkid:'',
+					add_ylkey:'',
+					add_ylgid:'',
+					add_ylnum:'',
+					
+					add_czmoney:'',
+					
+					add_czvip:'',
+					
+					demo1:'{{变量名}}',
+					demo2:'{{qq}}',
+					demo3:'{{key}}',
+					demo4:'{{val}}',
+					
+					sel_ztlist:['上架','下架'],
+					sel_zt:'',
+					sel_goodsid:'',
+					sel_dowhat:'',
+					sel_title:'',
+					sel_addmsg:'',
+					sel_money:'',
+					sel_havenum:'',
+					sel_sell:'',
+					
+					sel_geturl:'',
+					sel_getpost:'',
+					sel_getcookie:'',
+					sel_ylurl:'',
+					sel_yltkid:'',
+					sel_ylkey:'',
+					sel_ylgid:'',
+					sel_ylnum:'',
+					sel_czmoney:'',
+					sel_czvip:'',
+					
+					
+					
+					
+				},
+				watch:{
+					add_ylurl(val){
+						//禁止填http://
+						val = val.replace(/\//g,'');
+						val = val.replace(/\:/g,'');
+						this.add_ylurl=val;
+					},
+					sel_ylurl(val){
+						//禁止填http://
+						val = val.replace(/\//g,'');
+						val = val.replace(/\:/g,'');
+						this.sel_ylurl=val;
+					},
+					sel_geturl(val){
+						if(val==null || val=='' || !val){
+							this.sel_geturl='';
+						}
+					},
+					sel_getpost(val){
+						if(val==null || val=='' || !val){
+							this.sel_getpost='';
+						}
+					},
+					sel_getcookie(val){
+						if(val==null || val=='' || !val){
+							this.sel_getcookie='';
+						}
+					},
+					sel_ylurl(val){
+						if(val==null || val=='' || !val){
+							this.sel_ylurl='';
+						}
+					},
+					sel_yltkid(val){
+						if(val==null || val=='' || !val){
+							this.sel_yltkid='';
+						}
+					},
+					sel_ylkey(val){
+						if(val==null || val=='' || !val){
+							this.sel_ylkey='';
+						}
+					},
+					sel_ylgid(val){
+						if(val==null || val=='' || !val){
+							this.sel_ylgid='';
+						}
+					},
+					sel_ylnum(val){
+						if(val==null || val=='' || !val){
+							this.sel_ylnum='';
+						}
+					},
+					sel_czmoney(val){
+						if(val==null || val=='' || !val){
+							this.sel_czmoney='';
+						}
+					},
+					sel_czvip(val){
+						if(val==null || val=='' || !val){
+							this.sel_czvip='';
+						}
+					},
+				},
+				methods: {
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.get("../../goods.list?type=getList").then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data;
+								this.serverip = res.data.serverip
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+
+					},
+					refresh() {
+						location.href = location.href;
+					},
+					km(id){
+						location.href = 'km.html?id='+id;
+					},
+					del(id) {
+						let that = this;
+						swal({
+							title: "",
+							text: "是否删除记录(id=" + id + ")，删除之后无法恢复，请谨慎操作",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../pay.list", {
+								type: 'del',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.page=1;
+										that.getpage();
+									}, 100);
+									swal("删除成功！", "您已经永久删除了这条记录。", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("删除失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					add(){
+						//先判断公共参数
+						if(this.add_title.length<2 || this.add_title.length>10){
+							layer.alert('商品标题为2-10字符', {icon: 0});
+						}else if(this.add_msg.length>300){
+							layer.alert('商品备注请控制在300字符以内', {icon: 0});
+						}else if(this.add_money<0.01 || this.add_money>9999.99){
+							layer.alert('商品价格为0.01-9999.99元', {icon: 0});
+						}else if( (this.add_havenum>99999999 || this.add_havenum<1) && this.dowhat!="自动发货" ){
+							layer.alert('商品库存为1-99999999', {icon: 0});
+						}else{
+							
+							if(this.dowhat=='POST对接'){
+								// post对接判断
+								if(this.add_geturl.length<1 || this.add_geturl.length>300){
+									layer.alert('请输入正确的url内容', {icon: 0});
+								}else if(this.add_getpost.length>300){
+									layer.alert('post数据不可超过300字符', {icon: 0});
+								}else if(this.add_getcookie.length>300){
+									layer.alert('cookie数据不可超过300字符', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=add',{
+										dowhat:'POST对接',
+										add_title:that.add_title,
+										add_msg:that.add_msg,
+										add_money:that.add_money,
+										add_havenum:that.add_havenum,
+										add_geturl:that.add_geturl,
+										add_getpost:that.add_getpost,
+										add_getcookie:that.add_getcookie,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+									
+								}
+							}else if(this.dowhat=='亿乐社区'){
+								if(this.add_ylurl.length<2 || this.add_ylurl.length>100){
+									layer.alert('请输入正确的亿乐域名', {icon: 0});
+								}else if(this.add_yltkid<1000 || this.add_yltkid>99999999){
+									layer.alert('请输入正确的亿乐TokenId', {icon: 0});
+								}else if(this.add_ylkey.length != 32){
+									layer.alert('请输入正确的32位亿乐密钥', {icon: 0});
+								}else if(this.add_ylgid<1){
+									layer.alert('请输入正确的亿乐商品gid', {icon: 0});
+								}else if(this.add_ylnum<1 || this.add_ylnum>9999){
+									layer.alert('请输入正确的亿乐商品基数1-9999', {icon: 0});
+								}else{
+									
+									var that = this;
+									that.$http.post('../../goods.list?type=add',{
+										dowhat:'亿乐社区',
+										add_title:that.add_title,
+										add_msg:that.add_msg,
+										add_money:that.add_money,
+										add_havenum:that.add_havenum,
+										add_ylurl:that.add_ylurl,
+										add_yltkid:that.add_yltkid,
+										add_ylkey:that.add_ylkey,
+										add_ylgid:that.add_ylgid,
+										add_ylnum:that.add_ylnum,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+									
+									
+									
+								}
+								
+								
+								
+							}else if(this.dowhat=='用户系统充值余额'){
+								if(this.add_czmoney<0.01 || this.add_czmoney>9999){
+									layer.alert('请输入正确的充值比例', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=add',{
+										dowhat:'用户系统充值余额',
+										add_title:that.add_title,
+										add_msg:that.add_msg,
+										add_money:that.add_money,
+										add_havenum:that.add_havenum,
+										add_czmoney:that.add_czmoney,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								}
+							}else if(this.dowhat=='用户系统购买VIP'){
+								if(this.add_czvip<0.01 || this.add_czvip>9999){
+									layer.alert('请输入正确的vip价格', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=add',{
+										dowhat:'用户系统购买VIP',
+										add_title:that.add_title,
+										add_msg:that.add_msg,
+										add_money:that.add_money,
+										add_havenum:that.add_havenum,
+										add_czvip:that.add_czvip,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								}
+							}else if(this.dowhat=='自动发货'){
+									var that = this;
+									that.$http.post('../../goods.list?type=add',{
+										dowhat:'自动发货',
+										add_title:that.add_title,
+										add_msg:that.add_msg,
+										add_money:that.add_money,
+										add_havenum:that.add_havenum,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								
+							}
+							
+						}
+						
+						
+					},
+					empty(){
+						this.dowhat='POST对接';
+						this.add_title='';
+						this.add_msg='';
+						this.add_money='';
+						this.add_havenum='';
+						this.add_geturl='';
+						this.add_getpost='';
+						this.add_getcookie='';
+						this.add_ylurl='';
+						this.add_yltkid='';
+						this.add_ylkey='';
+						this.add_ylgid='';
+						this.add_ylnum='';
+						this.add_czmoney='';
+						this.add_czvip='';
+					},
+					empty2(){
+						//this.sel_goodsid='';
+						this.sel_zt='上架';
+						this.sel_dowhat='POST对接';
+						this.sel_title='';
+						this.sel_addmsg='';
+						this.sel_money='';
+						this.sel_havenum='';
+						this.sel_sell='';
+						
+						this.sel_geturl='';
+						this.sel_getpost='';
+						this.sel_getcookie='';
+						this.sel_ylurl='';
+						this.sel_yltkid='';
+						this.sel_ylkey='';
+						this.sel_ylgid='';
+						this.sel_ylnum='';
+						this.sel_czmoney='';
+						this.sel_czvip='';
+					},
+					sel(id){
+						// 编辑数据内容
+						var that = this;
+						this.$http.post('../../goods.list?type=select',{
+							goodsid:id	
+						}).then(function(res){
+							if(res.data.code==1){
+								that.page=3;
+								that.sel_goodsid=id;
+								
+								that.sel_zt=res.data.model.sel_zt;
+								that.sel_dowhat=res.data.model.sel_dowhat;
+								that.sel_title=res.data.model.sel_title;
+								that.sel_addmsg=res.data.model.sel_addmsg;
+								that.sel_money=res.data.model.sel_money;
+								that.sel_havenum=res.data.model.sel_havenum;
+								that.sel_sell=res.data.model.sel_sell;
+								
+								that.sel_geturl=res.data.model.sel_geturl;
+								that.sel_getpost=res.data.model.sel_getpost;
+								that.sel_getcookie=res.data.model.sel_getcookie;
+								that.sel_ylurl=res.data.model.sel_ylurl;
+								that.sel_yltkid=res.data.model.sel_yltkid;
+								that.sel_ylkey=res.data.model.sel_ylkey;
+								that.sel_ylgid=res.data.model.sel_ylgid;
+								that.sel_ylnum=res.data.model.sel_ylnum;
+								that.sel_czmoney=res.data.model.sel_czmoney;
+								that.sel_czvip=res.data.model.sel_czvip;
+								
+								
+							}else{
+								layer.alert(res.data.message, {icon: 0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+						})
+					},
+					sel_edu(){
+						//先判断公共参数
+						if(this.sel_title.length<2 || this.sel_title.length>10){
+							layer.alert('商品标题为2-10字符',{icon: 0});
+						}else if(this.sel_addmsg.length>300){
+							layer.alert('商品备注请控制在300字符以内', {icon: 0});
+						}else if(this.sel_money<0.01 || this.sel_money>9999.99){
+							layer.alert('商品价格为0.01-9999.99元', {icon: 0});
+						}else if(this.sel_sell>99999999){
+							layer.alert('商品已售数量请勿设置太大', {icon: 0});
+						}else if(this.sel_zt!='上架' && this.sel_zt!='下架'){
+							layer.alert('请选择商品状态', {icon: 0});
+						}else if(this.sel_havenum>99999999){
+							layer.alert('商品库存请勿设置太大', {icon: 0});
+						}else{
+							
+							if(this.sel_dowhat=='POST对接'){
+								// post对接判断
+								if(this.sel_geturl.length<1 || this.sel_geturl.length>300){
+									layer.alert('请输入正确的url内容', {icon: 0});
+								}else if(this.sel_getpost.length>300){
+									layer.alert('post数据不可超过300字符', {icon: 0});
+								}else if(this.sel_getcookie.length>300){
+									layer.alert('cookie数据不可超过300字符', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=sel_edu',{
+										sel_goodsid:that.sel_goodsid,
+										sel_dowhat:'POST对接',
+										sel_title:that.sel_title,
+										sel_addmsg:that.sel_addmsg,
+										sel_money:that.sel_money,
+										sel_havenum:that.sel_havenum,
+										sel_zt:that.sel_zt,
+										sel_sell:that.sel_sell,
+										
+										sel_geturl:that.sel_geturl,
+										sel_getpost:that.sel_getpost,
+										sel_getcookie:that.sel_getcookie,
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty2();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+									
+								}
+							}else if(this.sel_dowhat=='亿乐社区'){
+								if(this.sel_ylurl.length < 2 || this.sel_ylurl.length > 100){
+									layer.alert('请输入正确的亿乐域名', {icon: 0});
+								}else if(this.sel_yltkid<1000 || this.sel_yltkid>99999999){
+									layer.alert('请输入正确的亿乐TokenId', {icon: 0});
+								}else if(this.sel_ylkey.length != 32){
+									layer.alert('请输入正确的32位亿乐密钥', {icon: 0});
+								}else if(this.sel_ylgid<1){
+									layer.alert('请输入正确的亿乐商品gid', {icon: 0});
+								}else if(this.sel_ylnum<1 || this.sel_ylnum>9999){
+									layer.alert('请输入正确的亿乐商品基数1-9999', {icon: 0});
+								}else{
+									
+									var that = this;
+									that.$http.post('../../goods.list?type=sel_edu',{
+										sel_goodsid:that.sel_goodsid,
+										sel_dowhat:'亿乐社区',
+										sel_title:that.sel_title,
+										sel_addmsg:that.sel_addmsg,
+										sel_money:that.sel_money,
+										sel_havenum:that.sel_havenum,
+										sel_zt:that.sel_zt,
+										sel_sell:that.sel_sell,
+										
+										sel_ylurl:that.sel_ylurl,
+										sel_yltkid:that.sel_yltkid,
+										sel_ylkey:that.sel_ylkey,
+										sel_ylgid:that.sel_ylgid,
+										sel_ylnum:that.sel_ylnum,
+										
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty2();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+									
+									
+									
+								}
+								
+								
+								
+							}else if(this.sel_dowhat=='用户系统充值余额'){
+								if(this.sel_czmoney<0.01 || this.sel_czmoney>9999){
+									layer.alert('请输入正确的充值比例', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=sel_edu',{
+										sel_goodsid:that.sel_goodsid,
+										sel_dowhat:'用户系统充值余额',
+										sel_title:that.sel_title,
+										sel_addmsg:that.sel_addmsg,
+										sel_money:that.sel_money,
+										sel_havenum:that.sel_havenum,
+										sel_zt:that.sel_zt,
+										sel_sell:that.sel_sell,
+										sel_czmoney:that.sel_czmoney
+										
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty2();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								}
+							}else if(this.sel_dowhat=='用户系统购买VIP'){
+								if(this.sel_czvip<0.01 || this.sel_czvip>9999){
+									layer.alert('请输入正确的vip价格', {icon: 0});
+								}else{
+									var that = this;
+									that.$http.post('../../goods.list?type=sel_edu',{
+										sel_goodsid:that.sel_goodsid,
+										sel_dowhat:'用户系统购买VIP',
+										sel_title:that.sel_title,
+										sel_addmsg:that.sel_addmsg,
+										sel_money:that.sel_money,
+										sel_havenum:that.sel_havenum,
+										sel_zt:that.sel_zt,
+										sel_sell:that.sel_sell,
+										
+										sel_czvip:that.sel_czvip,
+										
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty2();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								}
+							}else if(this.sel_dowhat=='自动发货'){
+								 	var that = this;
+									that.$http.post('../../goods.list?type=sel_edu',{
+										sel_goodsid:that.sel_goodsid,
+										sel_dowhat:'自动发货',
+										sel_title:that.sel_title,
+										sel_addmsg:that.sel_addmsg,
+										sel_money:that.sel_money,
+										sel_zt:that.sel_zt,
+										
+									}).then(function(res){
+										if(res.data.code==1){
+											layer.alert(res.data.message, {icon: 1});
+											that.getpage();
+											that.empty2();
+											that.page=1;
+										}else{
+											layer.alert(res.data.message, {icon: 0});
+										}
+									},function(){
+										layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+									})
+								
+							}
+							
+						}
+					}
+
+				},
+				mounted: function() {
+					this.getpage();
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

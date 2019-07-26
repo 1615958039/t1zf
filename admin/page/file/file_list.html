@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="shortcut icon" href="favicon.ico">
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		
+		<!--弹窗-->
+		<script src="../../js/jquery.min.js?v=2.1.4"></script>
+		<script src="../../js/plugins/layer/layer.min.js"></script>
+
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<style type="text/css">
+			.backdef{background-color: #d1dade;}
+			.jieimg{max-height: 100%;text-align: center;margin-left:auto;margin-right: auto;}
+			.changename .layui-layer-title{background: #23c6c8;color:#fff;}
+			.changename .layui-layer-btn .layui-layer-btn0{background:#23c6c8;border-color: #23c6c8;color: #FFFFFF;}
+			.changename .layui-layer-btn .layui-layer-btn1{background:#23c6c8;border-color: #23c6c8;color: #FFFFFF;}
+			.changemsg .layui-layer-title{background: #1ab394;color:#fff;}
+			.changemsg .layui-layer-btn .layui-layer-btn0{background:#1ab394;border-color: #1ab394;color: #FFFFFF;}
+			.changemsg .layui-layer-btn .layui-layer-btn1{background:#1ab394;border-color: #1ab394;color: #FFFFFF;}
+			.del .layui-layer-title{background: #f8ac59;color:#fff;}
+			.del .layui-layer-btn .layui-layer-btn1{background:#f8ac59;border-color: #f8ac59;color: #FFFFFF;}
+			.del .layui-layer-btn .layui-layer-btn0{background:#f8ac59;border-color: #f8ac59;color: #FFFFFF;}
+			.geturl .layui-layer-title{background: #1c84c6;color:#fff;}
+			.geturl .layui-layer-btn .layui-layer-btn0{background:#1c84c6;border-color: #1c84c6;color: #FFFFFF;}
+			.geturl .layui-layer-btn .layui-layer-btn1{background:#1c84c6;border-color: #1c84c6;color: #FFFFFF;}
+			
+		</style>
+	</head>
+
+	<body class="gray-bg">
+		<div class="wrapper wrapper-content" id="app">
+			<div class="row">
+				<div class="col-sm-3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-content">
+							<div class="file-manager">
+								
+								<div v-if="isupfile">
+									<span>正在上传：</span><br />
+									<span>{{ upfilename }}  ( {{ upfilesize }} )</span>
+									<div class="progress progress-striped active">
+										<div :style="{'width':uphow+'%'}" aria-valuemax="100" aria-valuemin="0" role="progressbar" class="progress-bar progress-bar-success">
+											{{uphow}}%
+										</div>
+									</div>
+									
+								</div>
+								
+								<div v-else>
+									<h5>点击选择文件上传：</h5>
+									<input type="file" class="btn btn-primary btn-block" @change="upfile"/>
+								</div>
+								
+								
+								<div class="hr-line-dashed"></div>
+								
+								<span>已使用(总空间:{{maxsize}})</span>
+								<div :class="{'backdef':(jdt_width==0)}" class="progress progress-striped active">
+									<div :style="{'width':(jdt_width+'%')}" :class="{'progress-bar-warning':(jdt_width>50 && jdt_width<75),'progress-bar-primary':(jdt_width<50),'progress-bar-danger':(jdt_width>75)}" aria-valuemax="100" aria-valuemin="0" aria-valuenow="75" role="progressbar" class="progress-bar">
+										{{ jdt_width }}%
+									</div>
+		                        </div>
+								
+								<div class="hr-line-dashed"></div>
+									<h5>云盘使用说明：</h5>
+									请勿上传木马病毒文件，如有发现一律报警
+								<div class="clearfix"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-9 animated fadeInRight">
+					<div class="row">
+						<div class="col-sm-12">
+							
+							
+							
+							<div  class="file-box" v-for="item in filelist">
+								<div class="file">
+									<a>
+										<span class="corner"></span>
+										
+										<div class="image" v-if="item.type=='img'">
+                                        	<img alt="image" class="img-responsive jieimg" :src="'../../../file/'+item.fileurl">
+                                    	</div>
+
+										<div class="icon" v-else-if="item.type=='apk'">
+											<i class="fa fa-android"></i>
+										</div>
+										
+										<div class="icon" v-else>
+											<i class="fa fa-file"></i>
+										</div>
+										
+										<div class="file-name">
+											{{ item.name | fna}}
+											<br>
+											<small>上传时间:{{item.addtime}}</small>
+											<br>
+											<small>文件大小:{{item.size | fz}}</small>
+											<br>
+											<small>下载量:{{item.down}}</small>
+											<br>
+											<small>
+												<span class="badge badge-info" @click="changename(item.id,item.name)" >改名</span>
+												<span class="label label-primary" @click="getcodeurl(item.name,item.filemsg,item.filekey)">分享</span>
+												<span class="badge badge-success" @click="geturl(item.id,item.ispay,item.name,item.fileurl)">直链</span>
+												<span class="label label-warning" @click="del(item.id,item.name)">删除<span>
+											</small>
+										</div>
+										
+										
+										
+										
+									</a>
+								</div>
+							</div>
+							
+							
+							
+							
+							
+							
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script type="text/javascript">
+			var vm = new Vue({
+				el:'#app',
+				data:{
+					maxsize:'200m',
+					jdt_width:'20',
+					
+					isupfile:false,
+					uphow:'0',
+					upfilename:'',
+					upfilesize:'',
+					upspeed:'',
+					
+					
+					filelist:'',
+				},
+				filters:{
+					fz(value){
+						if(value==''){
+					        return "0k";
+						}
+						var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+						var index=0,
+						srcsize = parseFloat(value);
+					 	index=Math.floor(Math.log(srcsize)/Math.log(1024));
+					    var size =srcsize/Math.pow(1024,index);
+					    //  保留的小数位数
+					    size=size.toFixed(2);
+					    return size+unitArr[index];
+					},
+					fna(val){
+						if(val.length>10){
+							let filetype = val.split(".");
+							let i = filetype.length-1;
+							filetype = filetype[i];
+							return val.substr(0,8)+'~~.'+filetype;
+						}else {
+							return val;
+						}
+					}
+				},
+				methods:{
+					upfile(res){
+						var that=this;
+						let isfiletype=['png','jpg','jpeg','iapp','zip','rar','gif','apk','txt','3gp','avi','mp4'];
+						 
+						let filename = res.target.files[0].name;
+						let filesize = res.target.files[0].size;
+						
+						let filetype = filename.split(".");
+						let i = filetype.length-1;
+						filetype = filetype[i];
+						if(isfiletype.indexOf(filetype)==-1){
+							layer.alert('暂不支持该文件格式('+filetype+')', {icon: 2})
+							return false;
+    					}
+						
+						this.isupfile=true;
+						this.uphow='0';
+						this.upfilename=filename;
+						this.upspeed='0';
+						this.upfilesize=renderSize(filesize);
+						
+						let form = new FormData(); // FormData 对象
+						form.append("file",res.target.files[0]); // 文件对象
+						let xhr = new XMLHttpRequest(); // XMLHttpRequest 对象
+						xhr.open("post",'../../file.up', true); //post方式，url为服务器请求地址，true 该参数规定请求是否异步处理。
+						xhr.onload = upfileyes; //请求完成
+						xhr.onerror = upfileyes; //请求失败
+						xhr.upload.onprogress = progressFunction; //【上传进度调用方法实现】
+						xhr.upload.onloadstart = function() { //上传开始执行方法
+							ot = new Date().getTime(); //设置上传开始时间
+							oloaded = 0; //设置上传开始时，以上传的文件大小为0
+						};
+				
+						xhr.send(form); //开始上传，发送form数据
+						
+						function upfileyes(evt){
+							let row = JSON.parse(evt.target.responseText);
+							if(!row.code){
+								layer.alert('链接服务器失败！', {icon: 2})
+							}else if(row.code==1){
+								//上传成功
+								that.getpage();
+								layer.alert(row.message, {icon: 1});
+							}else{
+								layer.alert('上传失败!'+row.message, {icon: 2})
+							}
+							red()
+						}
+						function progressFunction(evt) {
+							//console.log(evt.total+"   AND  "+evt.loaded)
+							that.uphow = Math.floor(evt.loaded/evt.total*100);
+							if(that.uphow==100){
+								console.log(evt.target.responseText)
+							}
+						}
+						function renderSize(value){
+						    if(value==''){
+						        return "0k";
+						    }
+						    var unitArr = new Array("B","KB","MB","GB","TB","PB","EB","ZB","YB");
+						    var index=0,
+						    srcsize = parseFloat(value);
+						 	index=Math.floor(Math.log(srcsize)/Math.log(1024));
+						    var size =srcsize/Math.pow(1024,index);
+						    size=size.toFixed(2);
+						    return size+unitArr[index];
+						}
+						function red(){
+							that.isupfile=false;
+							that.uphow='0';
+							that.upfilename=filename;
+							that.upspeed='0';
+							that.upfilesize=renderSize(filesize);
+						}
+						
+					},
+					getpage(){
+						let that = this;
+						this.$http.get('../../file.up?type=getinfo').then(function(res){
+							if(res.data.code==1){
+								that.maxsize=renderSize(res.data.model.maxsize);
+								that.jdt_width=res.data.model.jdt_width;
+								that.filelist=res.data.list;
+							}else{
+								layer.alert('获取数据失败！请刷新页面', {icon: 2});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+						})
+						
+						function renderSize(value){
+						    if(value==''){
+						        return "0k";
+						    }
+						    var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB");
+						    var index=0,
+						    srcsize = parseFloat(value);
+						 	index=Math.floor(Math.log(srcsize)/Math.log(1024));
+						    var size =srcsize/Math.pow(1024,index);
+						    //  保留的小数位数
+						    size=size.toFixed(2);
+						    return size+unitArr[index];
+						}
+					},
+					changename(id,name){
+						var that = this;
+						layer.open({
+							title:'修改文件名:',
+						    type: 0,
+						    skin: 'changename',
+						    closeBtn: false,
+						    shift: 2,
+						    shadeClose: true,
+						    btn:['取消','确认'],
+						    content: '原文件：<b>'+name+'</b><input id="newfilename" type="text" placeholder="请输入新文件名" class="form-control"><font color="red" style="font-size:8px">注意：请尽量别使用特殊符号，否则容易出现乱码；只可修改文件名，无法修改文件后缀</font>',
+						    yes:function(index,layero){
+						    	layer.close(index);
+						    },
+						    btn2:function(index, layero){
+						    	that.$http.post('../../file.up?type=changename',{
+						    		id:id,
+						    		filename:$('#newfilename').val()
+						    	}).then(function(res){
+						    		if(res.data.code==1){
+							    		setTimeout(function(){
+							    			that.getpage()
+							    		},1000);
+						 				layer.alert(res.data.message, {icon:1});
+							 		}else{
+							    		layer.alert(res.data.message, {icon:2});
+							    	}
+						    	},function(){
+							    	layer.alert('服务器链接失败！请检查您的网络设置', {icon:2});
+								})
+						    }
+						});
+					},
+					del(id,name){
+						var that = this;
+						layer.open({
+							title:'删除文件:',
+						    type: 0,
+						    skin: 'del',
+						    closeBtn: false,
+						    shift: 2,
+						    shadeClose: true,
+						    btn:['取消','确定'],
+						    content: '是否删除文件：<font color="red">'+name+'</font>，删除后无法找回！！',
+						    yes:function(index,layero){
+						    	layer.close(index);
+						    },
+						    btn2:function(index, layero){
+						    	//这里写删除接口代码
+						    	that.$http.post('../../file.up?type=del',{
+						    		id:id
+						    	}).then(function(res){
+						    		if(res.data.code==1){
+							    		setTimeout(function(){
+							    			that.getpage()
+							    		},1000);
+						 				layer.alert(res.data.message, {icon:1});
+							 		}else{
+							    		layer.alert(res.data.message, {icon:2});
+							    	}
+						    	},function(){
+							    	layer.alert('服务器链接失败！请检查您的网络设置', {icon:2});
+								})
+						    }
+						});
+					},
+					geturl(id,ispay,name,fileurl){
+						var that = this;
+						let filetype = name.split(".");
+						let i = filetype.length-1;
+						filetype = filetype[i];
+						
+						if(ispay==1){
+							that.$http.get('../../file.up?type=geturl&id='+id).then(function(res){
+							    if(res.data.code==1){
+							    	layer.open({
+										title:'获取直链：',
+									    type: 0,
+									    skin: 'geturl',
+									    closeBtn: false,
+									    shift: 2,
+									    shadeClose: true,
+									    content: '文件：<b>'+name+'</b><br><br>直链为:<b><font color="red">'+res.data.url+'</font></b>',
+									    yes:function(index,layero){
+									    	layer.close(index);
+									    }
+									});
+							    }else{
+							   		layer.alert(res.data.message, {icon:2});
+							   	}
+							},function(){
+							    layer.alert('服务器链接失败！请检查您的网络设置', {icon:2});
+							})
+							
+							
+							
+						}else if(filetype=='png' || filetype=='jpg' || filetype=='jpeg'){
+							
+							layer.open({
+								title:'图片免费直链：',
+							    type: 0,
+							    skin: 'geturl',
+								closeBtn: false,								    
+								shift: 2,
+							    shadeClose: true,
+							    content: '文件：<b>'+name+'</b><br><br>直链为:<b><font color="red">http://t1zf.com/file/'+fileurl+'</font></b>',
+							    yes:function(index,layero){
+								    layer.close(index);
+								}
+							});
+							
+						}else{
+							
+							layer.open({
+								title:'获取文件直链:',
+							    type: 0,
+							    skin: 'geturl',
+							    closeBtn: false,
+							    shift: 2,
+							    shadeClose: true,
+							    btn:['取消','购买'],
+							    content: '文件名：<b>'+name+'</b><br><br>您还未购买直链，购买单文件直链需要<font color="red">1元</font>，购买后永久生效，删除源文件后失效',
+							    yes:function(index,layero){
+							    	layer.close(index);
+							    },
+							    btn2:function(index,layero){
+							    	that.$http.get('../../file.up?type=pay&id='+id).then(function(res){
+							    		if(res.data.code==1){
+							    			setTimeout(function(){
+							    				that.getpage()
+							    			},1000);
+							    			layer.alert(res.data.message, {icon:1});
+							    		}else{
+							    			layer.alert(res.data.message, {icon:2});
+							    		}
+							    	},function(){
+							    		layer.alert('服务器链接失败！请检查您的网络设置', {icon:2});
+							    	})
+							    	
+							    }
+							});
+						
+						}
+					},
+					getcodeurl(filename,filemsg,filekey){
+						var that = this;
+						layer.open({
+							title:'对外分享文件:',
+						    type: 0,
+						    skin: 'changemsg',
+						    closeBtn: false,
+						    shift: 2,
+						    shadeClose: true,
+						    btn:['关闭','确认'],
+						    content: '原文件：<b>'+filename+'</b><br><br>下载地址：<b><font>http://t1zf.com/file.html?'+filekey+'</font></b><br><br>备注：<input id="newfilemsg" type="text" placeholder="文件备注(200字)" value="'+filemsg+'" class="form-control"><font color="red" style="font-size:8px"></font>',
+						    yes:function(index,layero){
+						    	layer.close(index);
+						    },
+						    btn2:function(index, layero){
+						    	that.$http.post('../../file.up?type=changemsg',{
+						    		filekey:filekey,
+						    		filemsg:$('#newfilemsg').val()
+						    	}).then(function(res){
+						    		if(res.data.code==1){
+							    		setTimeout(function(){
+							    			that.getpage()
+							    		},1000);
+						 				layer.alert(res.data.message, {icon:1});
+							 		}else{
+							    		layer.alert(res.data.message, {icon:2});
+							    	}
+						    	},function(){
+							    	layer.alert('服务器链接失败！请检查您的网络设置', {icon:2});
+								})
+						    }
+						});
+					}
+					
+				},
+				mounted: function() {
+					this.getpage();
+				}
+				
+			});
+			
+			
+			
+			
+		</script>
+	</body>
+
+</html>

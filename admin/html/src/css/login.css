@@ -1,0 +1,33 @@
+.input-group{
+	margin-top: 12px;
+	height: 40px;
+}
+.m12{
+	margin-top: 12px;
+}
+.m20{
+	margin-top: 10px;
+}
+.h40{
+	height: 40px;
+}
+.cl{
+	color: #5ccdde;
+}
+.randcode{
+	height: 40px; 
+	width: 65px;
+	background-image: url();
+	background-size: 100% 100%;
+}
+.foottext{
+	margin-top: 5px;font-size:15px;display: flex;justify-content: space-between;flex-direction: row;
+}
+.fn{
+	float: none;
+}
+
+.rand{height: 40px; width: 65px; background-image: url();background-size: 100% 100%;}
+			.randcode{background-image: url(../../randcode.img);}
+			.foottext{margin-top: 5px;font-size:15px;display: flex;justify-content: space-between;flex-direction: row;}
+			.regc{height: 34px;width: 65px;}

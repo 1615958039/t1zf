@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<html>
+
+	<head>
+	
+	    <meta charset="utf-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	
+	    <title></title>
+	    <meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+	    <meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+	
+	    <link rel="shortcut icon" href="favicon.ico">
+	    <link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+	    <link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+	    <link href="../../css/animate.css" rel="stylesheet">
+	    <link href="../../css/plugins/summernote/summernote.css" rel="stylesheet">
+	    <link href="../../css/plugins/summernote/summernote-bs3.css" rel="stylesheet">
+	    <link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<script src="../../js/jquery.min.js?v=2.1.4"></script>
+	    <script src="../../js/bootstrap.min.js?v=3.3.6"></script>
+	    <script src="../../js/plugins/summernote/summernote.min.js"></script>
+	    <script src="../../js/plugins/summernote/summernote-zh-CN.js"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+			
+	
+	</head>
+
+	<body class="gray-bg">
+	    <div class="wrapper wrapper-content">
+			<div class="row">
+				
+				<div id="app">
+					<div class="col-sm-6">
+						<div class="ibox float-e-margins">
+							<div class="ibox-title">
+								<h5>下载页设置</h5>
+							</div>
+							<div class="ibox-content">
+								<div class="form-horizontal">
+									
+									
+									<div class="form-group">
+	                                	<label class="col-sm-3 control-label">网页标题</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="请输入下载页标题/10字符以内" :disabled="edutype==1" v-model="title" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+									
+									<div class="form-group">
+	                                	<label class="col-sm-3 control-label">直链ID</label>
+										<div class="col-sm-8">
+											<div class="input-group">
+	                                    		<input placeholder="APK文件直链的ID" :disabled="edutype==1" v-model="fileid" type="text" class="form-control">
+	                                    		<span :disabled="edutype==1" @click="dilog('直连必须使用本网站提供的云盘系统获取直链，直链ID即直链后面的几个字母，例如:网址?d?v=wsda,则id为 wsda')" class="input-group-addon"><span class="glyphicon glyphicon-exclamation-sign" style="color: green;"></span></span>
+	                                    	</div>
+	                                	</div>
+	                            	</div>
+									
+									<div class="form-group">
+	                                	<label class="col-sm-3 control-label">下载数量</label>
+										<div class="col-sm-8">
+		                                    <select :disabled="edutype==1" v-model="is_downsee" class="form-control" name="account">
+		                                        <option value="1">关闭</option>
+		                                        <option value="0">开启</option>
+		                                    </select>
+	                                	</div>
+	                            	</div>
+	                            	
+	                                
+	                            	<div class="form-group">
+	                            		<label class="col-sm-3 control-label">软件名</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="正确的软件名称" :disabled="edutype==1" v-model="apkname" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">软件版本号</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="软件版本号" :disabled="edutype==1" v-model="apkbb" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">软件图标icon</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="软件icon图标直链" :disabled="edutype==1" v-model="icon" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">介绍图1</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="介绍图直链1" :disabled="edutype==1" v-model="img1" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">介绍图2</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="介绍图直链2" :disabled="edutype==1" v-model="img2" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">介绍图3</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="介绍图直链3" :disabled="edutype==1" v-model="img3" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">介绍图4</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="介绍图直链4" :disabled="edutype==1" v-model="img4" type="text" class="form-control">
+	                                	</div>
+	                            	</div>
+	                            	
+	                            	<div class="form-group">
+	                                	<label class="col-sm-3 control-label">模板UI</label>
+										<div class="col-sm-8">
+		                                    <select :disabled="edutype==1" v-model="page" class="form-control" name="account">
+		                                        <option value="0">0 - 默认模板</option>
+		                                        <option value="1">1 - 模板0优化版</option> 
+		                                    </select>
+	                                	</div>
+	                            	</div>
+									
+									<div class="form-group">
+	                                	<label class="col-sm-3 control-label">自定义url</label>
+										<div class="col-sm-8">
+	                                    	<input placeholder="自定义页面地址后缀" :disabled="edutype==1" v-model="url" type="text" class="form-control">
+	                                    	<span class="help-block m-b-none"><font color="red">http://t1zf.com/apk?{{url}}</font></span>
+	                                	</div>
+	                            	</div>
+									
+									
+									<div class="form-group">
+										<div class="col-sm-offset-3 col-sm-8">
+											
+											<div v-show="edutype==2" @click="edu" class="btn btn-primary ">
+												<i class="fa fa-check"></i>&nbsp;保存
+											</div>
+											
+											<div @click="edutype=2" v-show="edutype==1" class="btn btn-info ">
+												<i class="fa fa-paste"></i>&nbsp;编辑
+											</div>
+											
+										</div>
+									</div>
+									
+									
+								</div>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+	
+	            <div class="col-sm-6">
+	                <div class="ibox float-e-margins">
+	                    <div class="ibox-title">
+	                        <h5>App说明介绍</h5>
+	                        
+	                        <div class="ibox-tools">
+	                        	<span id="add" class="badge badge-primary">保存</span>
+	                        </div>
+	                        
+	                    </div>
+	                    <div class="ibox-content no-padding">
+	
+	                        <div class="summernote">
+	                        
+	                        
+	                        
+	                        
+	                        </div>
+	
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	        
+	    </div>
+	
+	    <!-- 全局js -->
+	    
+	    <script>
+	        $(document).ready(function () {
+	
+	            $('.summernote').summernote({lang: 'zh-CN'});
+				$('#add').click(function(){
+					var text = $('.summernote').code();
+					vm.edu_msg(text);
+				})
+				
+	        });
+	        
+	        function settext(text){
+	        	$('.summernote').code(text);
+	        }
+	        
+	        var vm = new Vue({
+				el:"#app",
+				data:{
+					edutype:'1',
+					
+					title:'',
+					fileid:'',
+					apkname:'',
+					apkbb:'',
+					message:'',
+					is_downsee:'1',
+					icon:'',
+					img1:'',
+					img2:'',
+					img3:'',
+					img4:'',
+					url:'',
+					page:'',
+				},
+				methods:{
+					getpage(){
+						var that = this;
+						this.$http.get("../../apk.json").then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								
+								that.title=res.data.data.title;
+								that.fileid=res.data.data.fileid;
+								that.apkname=res.data.data.apkname;
+								that.apkbb=res.data.data.apkbb;
+								that.message=res.data.data.message;
+								that.is_downsee=res.data.data.is_downsee;
+								that.icon=res.data.data.icon;
+								that.img1=res.data.data.img1;
+								that.img2=res.data.data.img2;
+								that.img3=res.data.data.img3;
+								that.img4=res.data.data.img4;
+								that.url=res.data.data.url;
+								that.page=res.data.data.page;
+								settext(res.data.data.message);
+								
+								if(that.title==''){
+									that.edutype=2;
+								}
+								
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					edu(){
+						var that = this;
+						this.$http.post("../../apk.json",{
+							
+							type:'edu',
+							title:that.title,
+							fileid:that.fileid,
+							apkname:that.apkname,
+							apkbb:that.apkbb,
+							is_downsee:that.is_downsee,
+							icon:that.icon,
+							img1:that.img1,
+							img2:that.img2,
+							img3:that.img3,
+							img4:that.img4,
+							url:that.url,
+							page:that.page,
+							
+						}).then(function(res) {
+							if(res.data.code == "1"){ //获取列表成功，更新变量
+								setTimeout(function(){
+									that.getpage()
+									that.edutype=1;
+								},200);
+								layer.alert('修改成功！',{icon:1});
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					edu_msg(text){
+						var that = this;
+						this.$http.post("../../apk.json",{
+							type:'edu_msg',
+							msg:text
+						}).then(function(res) {
+							if(res.data.code == "1"){ //获取列表成功，更新变量
+								layer.alert('保存成功！',{icon:1});
+								that.getpage()
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					dilog(text){
+						layer.alert(text);
+					}
+				},
+				mounted(){
+					this.getpage();
+				}
+			})
+	        		
+
+	    </script>
+	
+	</body>
+
+</html>

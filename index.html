@@ -1,0 +1,84 @@
+<html lang="en">
+
+	<head>
+
+		<meta charset="utf-8">
+		<title>T1支付 - App接口平台</title>
+		
+		<meta name="Keywords" Content="T1支付,iapp支付接口,iapp用户管理系统,杰哥接口">
+		<meta name="description" Content="全网最强的iApp接口平台,免费iApp用户管理系统接口,低费率支付接口平台">
+		
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta baidu-gxt-verify-token="5b9b15a1e13d15465d6843000dc5e736">
+		
+		<link href="admin/css/bootstrap.min.css" rel="stylesheet">
+		<link href="src/css/index.min.css" rel="stylesheet">
+		<link href="admin/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		
+		
+	</head>
+
+	<body>
+		
+		<a id="menu-toggle" href="#" class="btn btn-dark btn-lg toggle"><i class="fa fa-bars"></i></a>
+    	<nav id="sidebar-wrapper">
+			<ul class="sidebar-nav">
+				<a id="menu-close" class="btn btn-light btn-lg pull-right toggle"><i class="fa fa-times"></i></a>
+				<li class="sidebar-brand">
+					<a>
+						<trans oldtip="Start Bootstrap">引导菜单</trans>
+					</a>
+				</li>
+				<li>
+					<a target="_blank" href="//shang.qq.com/wpa/qunwpa?idkey=1f8d9ad17793dc4670b85ed1c0cb2016730497d9163fb9423058a035fae3da15">
+						<trans>官方QQ群</trans>
+					</a>
+				</li>
+				<li>
+					<a href="admin/html/login.html">
+						<trans>登陆后台</trans>
+					</a>
+				</li>
+				<li>
+					<a href="admin/html/login.html">
+						<trans>注册账号</trans>
+					</a>
+				</li>
+				<li>
+					<a target="_blank" href="http://doc.t1zf.com/">
+						<trans>接口对接文档</trans>
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<header class="header">
+			<div class="text-vertical-center">
+				<h1><trans>T1支付</trans></h1>
+				<h3><trans>世界上最好的iApp后台</trans></h3>
+				<br>
+				<a href="admin/html/login.html" class="btn btn-dark btn-lg">
+					<trans>前往后台</trans>
+				</a>
+			</div>
+		</header>
+		<script src="admin/js/jquery.min.js"></script>
+		<script type="text/javascript">
+			//按钮开关控制
+			$("#menu-toggle").click(function(){
+				$("#sidebar-wrapper").addClass("active");
+			});
+			$("#menu-close").click(function(){
+				$("#sidebar-wrapper").removeClass("active");
+			});
+			
+			
+			//百度推送
+			(function(){ var bp = document.createElement('script'); var curProtocol = window.location.protocol.split(':')[0]; if (curProtocol === 'https') { bp.src = 'https://zz.bdstatic.com/linksubmit/push.js'; } else { bp.src = 'http://push.zhanzhang.baidu.com/push.js'; } var s = document.getElementsByTagName("script")[0]; s.parentNode.insertBefore(bp, s); })();
+			
+		</script>
+		
+	</body>
+
+</html>

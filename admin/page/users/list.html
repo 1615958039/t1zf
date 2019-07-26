@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title></title>
+		
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+		
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css"/>
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+
+				<div class="col-sm-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								用户签到&在线日志
+							</h5>
+							<div class="ibox-tools" :class="{'open':open_3}">
+								
+								<a @click="openselect(3)" class="dropdown-toggle" data-toggle="dropdown">
+                                	{{ listtype }}<span class="caret"></span>
+                            	</a>
+	                            <ul class="dropdown-menu dropdown-user">
+	                                <li>
+	                                	<a @click="edulisttype('在线')">在线</a>
+	                                </li>
+	                                <li>
+	                                	<a @click="edulisttype('签到')">签到</a>
+	                                </li>
+	                            </ul>
+							</div>
+						</div>
+						<div class="ibox-content">
+
+							<div class="row" style="margin-bottom: 5px;">
+								<div class="col-lg-4">
+									<div class="input-group">
+										
+
+										<input v-model="keyword" type="text" class="form-control" :placeholder="place">
+										
+										<span class="input-group-btn" :class="{'open':open_1}">
+											
+                                            <button @click="openselect(1)" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{search}}<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li v-for="item in searchList">
+													<a @click="setsearch(item)">{{item}}</a>
+												</li>
+											</ul>
+											
+											
+											<button @click="getpage" class="btn btn-primary" type="button">搜索</button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th @click="changeOrderby2" :class="{'dropup':(orderby=='id升序'),'textred':(orderby=='id升序' || orderby=='id降序')}">ID<span class="caret"></span></th>
+											<th>用户</th>
+											<th>
+												<span v-show="listtype=='在线'">最后在线</span>
+												<span v-show="listtype=='签到'">签到时间</span>
+											</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in items">
+											<th>{{ item.id }}</th>
+											<th>{{ item.user }}</th>
+											<th>{{ item.addtime }}</th>
+											<th>
+												<span @click="del(item.id)" class="badge badge-warning"><span class="fa fa-trash-o"></span>&nbsp;&nbsp;删除</span>
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~  (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<p>
+								<div>
+									共 {{havenum}} 条数据,每页
+									<span class="btn-group dropup" :class="{'open':open_2}">
+										<button @click="openselect(2)" class="btn btn-white btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{pagenum}}<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li>
+												<a @click="dopagenum(10)">10</a>
+											</li>
+											<li>
+												<a @click="dopagenum(30)">30</a>
+											</li>
+											<li>
+												<a @click="dopagenum(50)">50</a>
+											</li>
+											<li>
+												<a @click="dopagenum(100)">100</a>
+											</li>
+										</ul>
+									</span>
+									<span>条</span>
+								</div>
+
+								<div v-html="pagetext">
+
+								</div>
+
+							</p>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+			</div>
+		</div>
+		
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					
+					place: '用户名',
+					pagetext: '',
+					items: [],
+					
+					listtype:'在线',
+					search: '用户',
+					keyword: '',
+					nowpage: '1',
+					pagenum: '30',
+					orderby: '',
+
+					maxpage: '',
+					havenum: '',
+
+					searchList: ['用户','时间'],
+					
+					open_1:false,
+					open_2:false,
+					open_3:false,
+				},
+				filters: {
+					addtext(val){
+						val = val+'';
+						if(val.length>10){
+							val = val.substring(0,10)+'...';
+						}
+						return val;
+					}
+				},
+				watch: {
+					search(val) {
+						if(val == "用户") {
+							this.place = "用户名";
+						}else{
+							this.place = "时间描述";
+						}
+					}
+				},
+				methods: {
+					dopage(now, max) {
+						now = Number(now);
+						if(now < 1 || !now || now == '') {
+							now = 1;
+						}
+						let a = [];
+						let b = [];
+						for(let i = 0; i < 5; i++) {
+							a[i] = now - 2 + i;
+							if(a[i] >= 1 && a[i] <= max) {
+								b.push(a[i]);
+							}
+						}
+						let l = now - 1;
+						let r = now + 1;
+
+						if(now == 1) {
+							var page = '<ul class="pagination"><li class="disabled"><a>首页</a></li><li class="disabled"><a>&laquo;</a></li>';
+						} else {
+							var page = '<ul class="pagination"><li><a  onclick="vm.getpage(1)">首页</a></li><li><a onclick="vm.getpage(' + l + ')">&laquo;</a></li>';
+						}
+
+						for(i = 0; i < b.length; i++) {
+							if(b[i] == now) {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')"><font color="red">' + b[i] + '</font></a></li>';
+							} else {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')">' + b[i] + '</a></li>';
+							}
+						}
+
+						if(now == max) {
+							page = page + '<li  class="disabled"><a>&raquo;</a></li><li class="disabled"><a>尾页</a></li></ul>';
+						} else {
+							page = page + '<li><a onclick="vm.getpage(' + r + ')">&raquo;</a></li><li><a onclick="vm.getpage(' + max + ')">尾页</a></li></ul>';
+						}
+
+						this.pagetext = page;
+					},
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.post("../../users.log", {
+							listtype:this.listtype,
+							search: this.search,
+							keyword: this.keyword,
+							nowpage: this.nowpage,
+							pagenum: this.pagenum,
+							orderby: this.orderby
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data;
+								this.search = res.data.modle.search;
+								this.keyword = res.data.modle.keyword;
+								this.nowpage = res.data.modle.nowpage;
+								this.pagenum = res.data.modle.pagenum;
+								this.orderby = res.data.modle.orderby;
+								this.maxpage = res.data.modle.maxpage;
+								this.havenum = res.data.modle.havenum;
+								this.listtype = res.data.modle.listtype;
+								this.dopage(this.nowpage, this.maxpage);
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+
+					},
+					dopagenum(num) {
+						this.pagenum = num;
+						this.getpage();
+						this.open_2=false;
+					},
+					changeOrderby2() {
+						if(this.orderby == "id降序" || this.orderby == '') {
+							this.orderby = "id升序";
+						} else {
+							this.orderby = "id降序";
+						}
+						this.getpage();
+					},
+					setsearch(val) {
+						this.search = val;
+						this.open_1=false;
+					},
+					refresh(){
+						location.href=location.href;
+					},
+					del(id) {
+						let that = this;
+						swal({
+							title: "",
+							text: "是否删除记录(id=" + id + ")，删除之后无法恢复，请谨慎操作",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../users.log", {
+								type: 'del',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.getpage();
+									}, 100);
+									swal("删除成功！", "您已经永久删除了这条记录。", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("删除失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					openselect(id){
+						if(id==1){
+							if(this.open_1==true){
+								this.open_1=false;
+							}else{
+								this.open_1=true;
+							}
+						}else if(id==2){
+							if(this.open_2==true){
+								this.open_2=false;
+							}else{
+								this.open_2=true;
+							}
+						}else if(id==3){
+							if(this.open_3==true){
+								this.open_3=false;
+							}else{
+								this.open_3=true;
+							}
+						}
+					},
+					edulisttype(val){
+						this.listtype=val;
+						this.open_3 = false;
+						this.getpage();
+					},
+					tc(text){
+						text = text.replace(/\</g,"&lt;");
+						text = text.replace(/\>/g,"&gt;");
+						layer.alert(text,{
+							title:'内容详情：'
+						})
+					},
+
+				},
+				mounted: function(){
+					this.getpage();
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

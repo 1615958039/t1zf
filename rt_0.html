@@ -1,0 +1,87 @@
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<title>订单支付详情 - T1支付 </title>
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no">
+		<link href="admin/css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+	</head>
+	<body style="background-color: #FFFFFF;margin: 0;padding: 0;">
+		
+		<div style="margin-top: 20%;width: 90%;padding-left: 5%;padding-right: 5%;">
+			<h1 style="text-align: center;width: 100%;margin-bottom: 10%;" id="money"></h1>
+			
+			<div style="width: 100%;display: flex;flex-direction: row;white-space:nowrap">
+				<div>支付状态：</div>
+				<div style="width: 100%;display: flex;flex-direction: row-reverse;" id="ispay"></div>
+			</div>
+			
+			<div style="width: 100%;display: flex;flex-direction: row;white-space:nowrap;margin-top: 5px;">
+				<div>订单号：</div>
+				<div style="width: 100%;display: flex;flex-direction: row-reverse;" id="orderid"></div>
+			</div>
+			
+			<div style="width: 100%;display: flex;flex-direction: row;white-space:nowrap;margin-top: 5px;">
+				<div>付款方式：</div>
+				<div style="width: 100%;display: flex;flex-direction: row-reverse;" id="paytype"></div>
+			</div>
+			
+			<div style="width: 100%;display: flex;flex-direction: row;white-space:nowrap;margin-top: 5px;">
+				<div>订单创建：</div>
+				<div style="width: 100%;display: flex;flex-direction: row-reverse;" id="addtime"></div>
+			</div>
+			
+			
+		</div>
+		
+		<script src="src/js/jq.js" type="text/javascript" charset="utf-8"></script>
+		<script src="admin/js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="admin/js/plugins/sweetalert/sweetalert.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script type="text/javascript">
+			//默认模板，无任何花里胡哨。如有bug请联系站长
+			//为了减小体积和兼容各安卓浏览器，此页面代码改用jq写(vue不兼容部分低版本安卓自带浏览器)
+			var $_GET = (function(){ var url = window.document.location.href.toString(); var u = url.split("?"); if(typeof(u[1]) == "string"){ u = u[1].split("&"); var get = {}; for(var i in u){ var j = u[i].split("="); get[j[0]] = j[1]; } return get; } else { return {}; } })();
+			let t1_orderid = '';
+			let t1_key = $_GET['key']; 
+			if($_GET['out_trade_no']!=undefined){
+				t1_orderid = $_GET['out_trade_no'];
+			}else if($_GET['pay_id']!=undefined){
+				t1_orderid = $_GET['pay_id'];
+			}
+			index(t1_key,t1_orderid);
+		
+			
+			function index(t1_key,t1_orderid){
+				$.get('payrt.json?key='+t1_key+'&orderid='+t1_orderid,function(res){
+					res = JSON.parse(res);
+					if(res.code=='1'){
+						$('#money').html('￥'+res.money);
+						$('#ispay').html(res.ispay);
+						$('#orderid').html(res.orderid);
+						$('#paytype').html(res.paytype);
+						$('#addtime').html(res.addtime);
+						if(res.ispay=='未完成支付'){
+							setTimeout(function(){
+								index(t1_key,t1_orderid);
+							},1000)
+						}else if(res.ispay=='已支付'){
+							swal({
+				                title: "支付成功",
+				                text: "具体业务请返回App内查询，如有疑问请联系页面下方的客服",
+				                type: "success"
+				            });
+						}
+					}else{
+						layer.alert("服务器链接失败！请刷新页面重试", {icon: 2});
+					}
+				});
+			}
+			
+			
+			
+			
+			
+		</script>
+	</body>
+</html>

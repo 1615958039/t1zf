@@ -1,0 +1,114 @@
+a {
+	text-decoration: none
+}
+
+body {
+	margin: 0 auto;
+	max-width: 880px;
+	box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+	min-width: 320px;
+	padding-bottom: 0.1px
+}
+
+html {
+	background: #eee
+}
+
+* {
+	letter-spacing: 1px;
+	font-family: 'Helvetica', 'Droidsansfallback', 'Heiti SC';
+	box-sizing: border-box;
+	outline: none;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+	color: #333;
+}
+
+.icon {
+	width: 60px;
+	height: 60px;
+	margin-top: 15px;
+}
+
+.title {
+	font-size: 15px;
+	margin-top: 10px;
+}
+
+p {
+	font-size: 12pt;
+	color: #4CAF50;
+	margin-top: 5px;
+}
+
+.content {
+	margin-top: 10px;
+	font-size: 14px;
+	color: #757575;
+	margin-bottom: 15px;
+}
+
+.picture {
+	overflow-x: scroll;
+	width: 100%;
+	white-space: nowrap;
+	margin-bottom: 25px;
+}
+
+.child {
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.p {
+	font-size: 12px;
+	color: #939393;
+	margin-top: 4px;
+}
+
+.show {
+	background: #fff;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+	border-radius: 2px;
+	font-size: 14px;
+	color: #616161;
+	word-wrap: break-word;
+	padding-top: 10px;
+}
+
+.down {
+	border-top-left-radius: 0.5em;
+	border-top-right-radius: 0.5em;
+	border-bottom-left-radius: 0.5em;
+	border-bottom-right-radius: 0.5em;
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	margin-top: 10px;
+	color: #ffffff;
+	background: #4CAF50;
+	width: 100px;
+	height: 30px;
+	margin-bottom: 20px;
+}
+
+.review {
+	margin: 15px;
+	font-size: 14px;
+	color: #424242
+}
+
+.user {
+	margin-left: 15px;
+	margin-top: 10px;
+}
+
+.title2 {
+	color: #455A64;
+	margin-top: 5px;
+	margin-left: 30px;
+	font-size: 14px;
+}

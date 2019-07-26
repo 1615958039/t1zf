@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>支付订单</title>
+
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css" />
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+
+				<div class="col-sm-12" v-show="page==1">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>云文档列表</h5>
+							<div class="ibox-tools">
+								<a @click="page=2" class="collapse-link">
+									<i class="glyphicon glyphicon-plus-sign"></i>添加
+								</a>
+							</div>
+						</div>
+						<div class="ibox-content">
+
+							
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>标识</th>
+											<th>标题/备注</th>
+											<th>正文</th>
+											<th>添加日期</th>
+											<th>浏览量</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr v-for="item in items">
+											<th><code>{{ item.id }}</code></th>
+											<th>{{ item.msg }}</th>
+											<th @click="tc(item.textinfo)">{{ item.textinfo |addtext }}</th>
+											<th>{{ item.addtime }}</th>
+											<th>{{ item.see }}</th>
+											<th>
+
+												<!--<span class="badge badge-info">详情</span>-->
+												
+												<span class="badge badge-primary" @click="sel(item.id)"><span class="glyphicon glyphicon-edit"></span></span>
+												
+
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~ (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<div class="col-sm-12" v-show="page==2">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="gopage(2)"><i class="glyphicon glyphicon-menu-left"></i>返回&nbsp;</span>|&nbsp;添加商品
+							
+							</h5>
+						</div>
+						<div class="ibox-content">
+			
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">标题&备注</label>
+									<div class="col-sm-10">
+										<input v-model="msg" placeholder="10个字符以内" maxlength="10" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">基础访问量</label>
+									<div class="col-sm-10">
+										<input v-model="see" type="tel" placeholder="默认填0" class="form-control">
+									</div>
+								</div>
+								
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">正文</label>
+									<div class="col-sm-10">
+	                                    <textarea v-model="textinfo" class="form-control" style="height: 100px;" required="" aria-required="true"></textarea>
+	                                </div>
+								</div>
+								
+								<div class="form-group">
+									<div class="col-sm-4 col-sm-offset-2">
+										<button @click="add" class="btn btn-primary" type="submit">添加</button>
+										<button @click="msg='';see='';textinfo=''" class="btn btn-white" type="submit">清空</button>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<!--  数据编辑  -->
+				
+				
+				<div class="col-sm-12" v-show="page==3">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="gopage(1)"><i class="glyphicon glyphicon-menu-left"></i>返回&nbsp;</span>
+								|&nbsp;编辑商品 <font color="red">{{ id }}</font>
+								<span @click="del(id)" class="badge badge-warning"><span class="fa fa-trash"></span>删除</span>
+								
+							</h5>
+						</div>
+						<div class="ibox-content">
+			
+							
+							<div class="form-horizontal">
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">标题&备注</label>
+									<div class="col-sm-10">
+										<input v-model="msg" placeholder="10个字符以内" maxlength="10" type="text" class="form-control">
+									</div>
+								</div>
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">基础访问量</label>
+									<div class="col-sm-10">
+										<input v-model="see" type="tel" placeholder="默认填0" class="form-control">
+									</div>
+								</div>
+								
+								
+								<div class="form-group">
+									<label class="col-sm-2 control-label">正文</label>
+									<div class="col-sm-10">
+	                                    <textarea v-model="textinfo" class="form-control" style="height: 100px;" required="" aria-required="true"></textarea>
+	                                </div>
+								</div>
+								
+								<div class="form-group">
+									<div class="col-sm-4 col-sm-offset-2">
+										<button @click="sel_edu" class="btn btn-primary" type="submit">保存</button>
+										<button @click="msg='';see='';textinfo=''" class="btn btn-white" type="submit">清空</button>
+									</div>
+								</div>
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					page:'1',
+					items:[],
+					
+					id:'',
+					msg:'',
+					textinfo:'',
+					see:'',
+					
+				},
+				filters: {
+					addtext(val){
+						val = val+'';
+						if(val.length>10){
+							val = val.substring(0,10)+'...';
+						}
+						return val;
+					}
+				},
+				methods: {
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.get("../../textlist.json?type=getList").then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data;
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试',{icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					refresh() {
+						location.href = location.href;
+					},
+					del(id) {
+						let that = this;
+						swal({
+							title:"",
+							text: "是否删除记录(标识：" + id + ")，删除之后无法恢复，请谨慎操作",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../textlist.json", {
+								type: 'del',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.getpage();
+										that.page=1;
+										that.empty();
+									}, 100);
+									swal("删除成功！", "您已经永久删除了这条记录。", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("删除失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					add(){
+						var that = this;
+						that.$http.post('../../textlist.json?type=add',{
+							msg:that.msg,
+							textinfo:that.textinfo,
+							see:that.see,
+						}).then(function(res){
+							if(res.data.code==1){
+								layer.alert(res.data.message, {icon: 1});
+								that.getpage();
+								that.empty();
+							}else{
+								layer.alert(res.data.message, {icon: 0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+						})
+					},
+					empty(){
+						this.page='1';
+						this.id='';
+						this.msg='';
+						this.textinfo='';
+						this.see='';
+					},
+					sel(id){
+						// 编辑数据内容
+						var that = this;
+						this.$http.post('../../textlist.json?type=getinfo',{
+							id:id
+						}).then(function(res){
+							if(res.data.code==1){
+								that.empty();
+								that.page=3;
+								that.id=id;
+								that.msg=res.data.msg;
+								that.textinfo=res.data.textinfo;
+								that.see=res.data.see;
+							}else{
+								layer.alert(res.data.message, {icon: 0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+						})
+					},
+					tc(text){
+						text = text.replace(/\</g,"&lt;");
+						text = text.replace(/\>/g,"&gt;");
+						layer.alert(text,{
+							title:'内容详情：'
+						})
+					},
+					sel_edu(){
+						var that = this;
+						that.$http.post('../../textlist.json?type=sel_edu',{
+							id:that.id,
+							msg:that.msg,
+							textinfo:that.textinfo,
+							see:that.see,
+						}).then(function(res){
+							if(res.data.code==1){
+								layer.alert(res.data.message, {icon: 1});
+								that.getpage();
+								that.empty();
+							}else{
+								layer.alert(res.data.message, {icon: 0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置', {icon: 2});
+						})
+					},
+					gopage(id){
+						this.page=id;
+						this.empty();
+					}
+
+				},
+				mounted: function() {
+					this.getpage();
+					
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

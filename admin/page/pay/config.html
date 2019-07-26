@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>支付接口配置</title>
+		<meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+		<meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+		<link rel="shortcut icon" href="favicon.ico">
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+	    <link href="../../css/animate.css" rel="stylesheet">
+	    <link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+	    
+	    
+	    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		
+	    
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+				
+				
+				
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>易支付接口(彩虹、ABC、hack等等)</h5>
+						</div>
+						<div class="ibox-content">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">接口</label>
+									<div class=" col-sm-8 ">
+										<div class="input-group">
+											<!--不可点击 disabled-->
+											<input :disabled="(e_zt==1)" v-model="e_api" id="e_api" type="text" placeholder="需‘http://’和‘/’" class="form-control">
+												<div class="input-group-btn">
+													<button :disabled="(e_zt==1)" data-toggle="dropdown" class="btn btn-white dropdown-toggle" type="button">
+														推荐<span class="caret"></span>
+													</button>
+													<ul class="dropdown-menu pull-right">
+														<li v-for="item in eapilist">
+															<a @click="e_api=item.k">{{item.v}}</a>
+														</li>
+													</ul>
+												</div>
+										</div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">ID</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+	                                        <input :disabled="(e_zt==1)" v-model="e_pid" id="e_pid" type="tel" class="form-control">
+	                                        <span @click="dilog('id：易支付商户ID，在易支付用户中心获取，通常为4位以上的数字')" class="input-group-addon"><span class="glyphicon glyphicon-exclamation-sign" style="color: green;"></span></span>
+	                                    </div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Key</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+	                                        <input :disabled="(e_zt==1)" v-model="e_key" id="e_key" type="text" class="form-control">
+	                                        <span @click="dilog('key：易支付商户密钥，在易支付商户中心获取，通常为32位随机字母数字')" class="input-group-addon"><span class="glyphicon glyphicon-exclamation-sign" style="color: green;"></span></span>
+	                                    </div>
+									</div>
+								</div>
+								
+								
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-8">
+										
+										<div @click="change_epay" v-show="(e_zt==0)" class="btn btn-primary">
+											<i class="fa fa-check"></i>&nbsp;{{e_btn}}
+										</div>
+										
+										<div @click="e_zt=0" v-show="(e_zt==1)" class="btn btn-info ">
+											<i class="fa fa-paste"></i>&nbsp;编辑
+										</div>
+										
+										<a target='_blank' href="../../../pay.do?type=demo&paytype=epay" v-show="(e_zt==1)" class="btn btn-info ">
+											<i class="fa fa-rmb"></i>&nbsp;测试
+										</a>
+										
+										<div @click="e_api='';e_pid='';e_key=''" v-show="(e_zt==0)" class="btn btn-warning">
+											<i class="fa fa-warning"></i>&nbsp;清空
+										</div>
+										
+										
+										
+									</div>
+								</div>
+								
+						
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5><a href='https://codepay.fateqq.com/' target="_blank">码支付接口Codepay</a></h5>
+						</div>
+						<div class="ibox-content">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">ID</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+	                                        <input :disabled="(m_zt==1)" v-model="m_pid" id="m_pid" placeholder="Pid,纯数字" type="tel" class="form-control">
+	                                        <span @click="dilog('码支付商户id，登陆码支付后台->系统设置->码支付ID')" class="input-group-addon"><span class="glyphicon glyphicon-exclamation-sign" style="color: green;"></span></span>
+	                                    </div>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Key</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+	                                        <input v-model="m_key" placeholder="32位随机字母数字" id='m_key' :disabled="(m_zt==1)" type="text" class="form-control">
+	                                        <span @click="dilog('码支付通信密钥key，登陆码支付后台->系统设置->通信密钥')" class="input-group-addon"><span class="glyphicon glyphicon-exclamation-sign" style="color: green;"></span></span>
+	                                    </div>
+									</div>
+								</div>
+								
+								
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-8">
+										
+										<div v-show="(m_zt==0)" @click="change_mpay" class="btn btn-primary ">
+											<i class="fa fa-check"></i>&nbsp;{{m_btn}}
+										</div>		
+										
+										<div @click="m_zt=0" v-show="(m_zt==1)" class="btn btn-info ">
+											<i class="fa fa-paste"></i>&nbsp;编辑
+										</div>
+										
+										<a target='_blank' href="../../../pay.do?type=demo&paytype=mpay" v-show="(e_zt==1)" class="btn btn-info ">
+											<i class="fa fa-rmb"></i>&nbsp;测试
+										</a>
+										
+										<div @click="m_key='';m_pid='';" v-show="(m_zt==0)" class="btn btn-warning">
+											<i class="fa fa-warning"></i>&nbsp;清空
+										</div>
+										
+									</div>
+								</div>
+								
+						
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				<div class="col-sm-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title  back-change">
+							<h5>收款接口选择</h5>
+						</div>
+						<div class="ibox-content">
+
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>微信收款：</b>
+										<div @click="edu_wxpay('epay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(wxpay=='epay')">
+											<label> 易 </label>
+										</div>
+										<div @click="edu_wxpay('mpay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(wxpay=='mpay')">
+											<label> 码 </label>
+										</div>
+										<div @click="edu_wxpay('off')" class="radio radio-inline radio-inline">
+											<input type="radio" :checked="(wxpay=='off')">
+											<label> 关闭 </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>支付宝收款：</b>
+										<div @click="edu_alipay('epay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(alipay=='epay')">
+											<label> 易 </label>
+										</div>
+										<div @click="edu_alipay('mpay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(alipay=='mpay')">
+											<label> 码 </label>
+										</div>
+										<div @click="edu_alipay('off')" class="radio radio-inline radio-inline">
+											<input type="radio" :checked="(alipay=='off')">
+											<label> 关闭 </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>QQ收款：</b>
+										<div @click="edu_qqpay('epay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qqpay=='epay')">
+											<label> 易 </label>
+										</div>
+										<div @click="edu_qqpay('mpay')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qqpay=='mpay')">
+											<label> 码 </label>
+										</div>
+										<div @click="edu_qqpay('off')" class="radio radio-inline radio-inline">
+											<input type="radio" :checked="(qqpay=='off')">
+											<label> 关闭 </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							<br>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>支付结果通知样式：</b>
+										<div @click="edu_rt(0)" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(rt=='0')">
+											<label> 模板1(<a @click='lookrtimg(1)' @click.stop>打勾动画</a>) </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>执行结果显示：</b>
+										<div @click="edu_sysmsg" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(sysmsg==1)">
+											<label> 开 </label>
+										</div>
+										<div @click="edu_sysmsg" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(sysmsg==0)">
+											<label> 关 </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<br>
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>开启邮件通知：</b>
+										<div @click="edu_ismail" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(ismail==1)">
+											<label> 开 </label>
+										</div>
+										<div @click="edu_ismail" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(ismail==0)">
+											<label> 关 </label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							
+						</div>
+					</div>
+					
+				</div>
+				
+				
+				
+				
+				
+				
+				
+			</div>
+		</div>
+
+		
+		<script src="../../js/jquery.min.js?v=2.1.4"></script>
+		<script src="../../js/bootstrap.min.js?v=3.3.6"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		
+		<script type="text/javascript">
+			var vm = new Vue({
+				el:'#app',
+				data:{
+					eapilist:[{k:'http://pay.hackwl.cn/',v:'Hack免签约'},{k:"http://api.ye67t.cn/",v:"O泡易支付"},{k:'http://pay.aizhizi.cn/',v:"爱栀子易支付"},{k:"http://pays.sddyun.cn/",v:"ABC云支付"},{k:"http://www.tianyipay.xyz/",v:"墨尘易支付"}],
+					
+					e_zt:'',
+					e_pid:'',
+					e_key:'',
+					e_api:'',
+					e_btn:'提交',
+					
+					m_zt:'',
+					m_pid:'',
+					m_key:'',
+					m_btn:'提交',
+					
+					wxpay:'off',
+					qqpay:'off',
+					alipay:'off',
+					rt:'1',
+					ismail:'',
+					
+					sysmsg:'0',
+					
+				},
+				methods:{
+					index(){
+						this.$http.post('../../pay.config',{
+							type:''
+						}).then(function(res){
+							if(res.data.code==1){
+								//更新变量
+								this.e_zt=res.data.epay.zt;
+								this.e_pid=res.data.epay.e_pid;
+								this.e_key=res.data.epay.e_key;
+								this.e_api=res.data.epay.e_api;
+								this.m_zt=res.data.mpay.zt;
+								this.m_pid=res.data.mpay.m_pid;
+								this.m_key=res.data.mpay.m_key;
+								this.qqpay=res.data.model.qqpay;
+								this.wxpay=res.data.model.wxpay;
+								this.alipay=res.data.model.alipay;
+								this.rt=res.data.model.rt;
+								this.sysmsg = res.data.model.sysmsg;
+								this.ismail=res.data.model.ismail;
+							}else if(res.data.code=='-1'){
+								window.parent.frames.location.href="../../html/login.html" 
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){ 
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					change_epay(){
+						if(this.e_btn!='提交'){return false;console.log(1)}
+						if(this.e_api=='' || this.e_api.length< 5 || (this.e_api.indexOf("http://")=='-1' && this.e_api.indexOf("https://")=='-1')){
+							layer.tips('请输入正确的接口', '#e_api', {tips: [1, '#f0ad4e'],time: 3000});
+						}else if(this.e_pid.length<4){
+							layer.tips('请输入正确的ID号', '#e_pid', {tips: [1, '#f0ad4e'],time: 3000});
+						}else if(this.e_key.length > 32){
+							layer.tips('请输入32位以内的Key', '#e_key', {tips: [1, '#f0ad4e'],time: 3000});
+						}else{
+							let that = this;
+							this.e_btn="提交中...";
+							this.$http.post('../../pay.config',{
+								type:'epay_edu',
+								e_api:this.e_api,
+								e_key:this.e_key,
+								e_pid:this.e_pid
+							}).then(function(res){
+								that.e_btn="提交";
+								if(res.data.code==1){
+									layer.alert(res.data.message,{icon:1});
+									setTimeout(function(){
+										that.index();
+									},1000)
+								}else{
+									layer.alert(res.data.message,{icon:0});
+								}
+							},function(){
+								that.e_btn="提交";
+								layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+							})
+							
+						}
+					},
+					change_mpay(){
+						if(this.m_btn!='提交'){return false;console.log(1)}
+						 
+						if(this.m_pid.length<4){
+							layer.tips('请输入正确的ID号', '#m_pid', {tips: [1, '#f0ad4e'],time: 3000});
+						}else if(this.m_key.length<1){
+							layer.tips('请输入Key', '#m_key', {tips: [1, '#f0ad4e'],time: 3000});
+						}else{
+							let that = this;
+							this.m_btn="提交中...";
+							this.$http.post('../../pay.config',{
+								type:'mpay_edu',
+								m_key:this.m_key,
+								m_pid:this.m_pid
+							}).then(function(res){
+								that.m_btn="提交";
+								if(res.data.code==1){
+									layer.alert(res.data.message,{icon:1});
+									setTimeout(function(){
+										that.index();
+									},1000)
+								}else{
+									layer.alert(res.data.message,{icon:0});
+								}
+							},function(){
+								that.m_btn="提交";
+								layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+							})
+							
+						}
+					},
+					
+					edu_wxpay(val){
+						let that = this;
+						this.$http.post('../../pay.config',{
+							type:'edu_wxpay',
+							val:val
+						}).then(function(res){
+							if(res.data.code==1){
+								that.wxpay=val;
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					
+					
+					edu_alipay(val){
+						let that = this;
+						this.$http.post('../../pay.config',{
+							type:'edu_alipay',
+							val:val
+						}).then(function(res){
+							if(res.data.code==1){
+								that.alipay=val;
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					
+					
+					edu_qqpay(val){
+						let that = this;
+						this.$http.post('../../pay.config',{
+							type:'edu_qqpay',
+							val:val
+						}).then(function(res){
+							if(res.data.code==1){
+								that.qqpay=val;
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					
+					edu_rt(val){
+						let that = this;
+						this.$http.post('../../pay.config',{
+							type:'edu_rt',
+							val:val
+						}).then(function(res){
+							if(res.data.code==1){
+								that.rt=val;
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					edu_sysmsg(){
+						let that = this;
+						this.$http.get('../../pay.config?type=edu_sysmsg').then(function(res){
+							if(res.data.code==1){
+								that.index();
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					edu_ismail(){
+						let that = this;
+						this.$http.get('../../pay.config?type=edu_ismail').then(function(res){
+							if(res.data.code==1){
+								that.index();
+							}else{
+								layer.alert(res.data.message,{icon:0});
+							}
+						},function(){
+							layer.alert('服务器链接失败！请检查您的网络设置',{icon:2});
+						})
+					},
+					dilog(text){
+						//弹窗提示
+						layer.alert(text,{icon:3});
+					}
+				},
+				mounted:function(){
+					this.index();
+				}
+			})
+		</script>
+	</body>
+
+</html>

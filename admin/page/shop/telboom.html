@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>短信轰炸接口</title>
+		
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+		
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css"/>
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+	
+		
+		
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+
+				<div class="col-sm-12" v-show="page==1">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>轰炸任务列表</h5>
+							<div class="ibox-tools">
+								<a @click="page=2" class="collapse-link">
+									<i class="fa fa-plus"></i>添加
+								</a>
+							</div>
+						</div>
+						<div class="ibox-content">
+							
+							<div class="alert alert-info alert-dismissable">
+                            	<button aria-hidden="true" data-dismiss="alert" class="close" type="button">×</button>
+                            	价格为1波0.0001元余额，此接口扣除余额不写入日志。<a href="telboom_bmd.html">点我进入白名单系统</a>
+                        	</div> 
+							
+							
+								
+							<div class="row" style="margin-bottom: 5px;">
+								<div class="col-lg-4">
+									<div class="input-group">
+										<input v-model="keyword" type="text" class="form-control" :placeholder="place">
+										<span class="input-group-btn" :class="{'open':open_1}">
+										    <button @click="openselect(1)" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{search}}<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li v-for="item in searchList">
+													<a @click="setsearch(item)">{{item}}</a>
+												</li>
+											</ul>
+											<button @click="getpage" class="btn btn-primary" type="button">搜索</button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th @click="changeOrderby2" :class="{'dropup':(orderby=='id升序'),'textred':(orderby=='id升序' || orderby=='id降序')}">ID<span class="caret"></span></th>
+											<th>手机号</th>
+											<th>轰炸波数</th>
+											<th>状态</th>
+											<th>添加时间</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr v-for="item in items">
+											<th>{{ item.id }}</th>
+											<th>{{ item.tel }}</th>
+											<th>{{ item.addnum }}</th>
+											<th>{{ item.zt }}</th>
+											<th>{{ item.addtime }}</th>
+											<th>
+												<span v-show="item.zt!='已完成'"><span @click="stop(item.id)" class="badge badge-warning"><span class="fa fa-power-off"></span>&nbsp;停止</span>&nbsp;</span>
+												<span @click="del(item.id)" class="badge badge-warning"><span class="fa fa-trash-o"></span></span>
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~  (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<p>
+								<div>
+									共 {{havenum}} 条数据,每页
+									<span class="btn-group dropup" :class="{'open':open_2}">
+										<button @click="openselect(2)" class="btn btn-white btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{pagenum}}<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li>
+												<a @click="dopagenum(10)">10</a>
+											</li>
+											<li>
+												<a @click="dopagenum(30)">30</a>
+											</li>
+											<li>
+												<a @click="dopagenum(50)">50</a>
+											</li>
+											<li>
+												<a @click="dopagenum(100)">100</a>
+											</li>
+										</ul>
+									</span>
+									<span>条</span>
+								</div>
+
+								<div v-html="pagetext">
+
+								</div>
+
+							</p>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				<div class="col-sm-12" v-show="page==2">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="page=1"><i class="glyphicon glyphicon-menu-left"></i>返回</span>
+							</h5>
+						</div>
+						<div class="ibox-content">
+							
+							<div class="form-horizontal">
+								
+								
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">手机号码</label>
+									<div class="col-sm-8">
+                                    	<input v-model="tel" placeholder="请输入轰炸的手机号码"  type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">轰炸波数</label>
+									<div class="col-sm-8">
+                                    	<input v-model="num" placeholder="10、50、100、200、400、600"  type="text" class="form-control">
+                                	</div>
+                            	</div>
+								
+								
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-8">
+										<div @click="add" class="btn btn-primary ">
+											<i class="fa fa-check"></i>&nbsp;添加
+										</div>
+									</div>
+								</div>
+								
+								
+							</div>
+
+						</div>
+					</div>
+				</div>
+				
+				
+				
+			</div>
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					page:'1',
+					
+					place: '被炸的手机号',
+					pagetext: '',
+					items: [],
+
+					search: '手机号',
+					keyword: '',
+					nowpage: '1',
+					pagenum: '30',
+					orderby: '',
+
+					maxpage: '',
+					havenum: '',
+
+					searchList: ['手机号','时间'],
+					
+					open_1:false,
+					open_2:false,
+					
+					tel:'',
+					num:''
+				},
+				watch: {
+					search(val) {
+						if(val == "手机号") {
+							this.place = "被炸的手机号";
+						}else{
+							this.place = "时间描述";
+						}
+					}
+				},
+				methods: {
+					dopage(now, max) {
+						now = Number(now);
+						if(now < 1 || !now || now == '') {
+							now = 1;
+						}
+						let a = [];
+						let b = [];
+						for(let i = 0; i < 5; i++) {
+							a[i] = now - 2 + i;
+							if(a[i] >= 1 && a[i] <= max) {
+								b.push(a[i]);
+							}
+						}
+						let l = now - 1;
+						let r = now + 1;
+
+						if(now == 1) {
+							var page = '<ul class="pagination"><li class="disabled"><a>首页</a></li><li class="disabled"><a>&laquo;</a></li>';
+						} else {
+							var page = '<ul class="pagination"><li><a  onclick="vm.getpage(1)">首页</a></li><li><a onclick="vm.getpage(' + l + ')">&laquo;</a></li>';
+						}
+
+						for(i = 0; i < b.length; i++) {
+							if(b[i] == now) {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')"><font color="red">' + b[i] + '</font></a></li>';
+							} else {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')">' + b[i] + '</a></li>';
+							}
+						}
+
+						if(now == max) {
+							page = page + '<li  class="disabled"><a>&raquo;</a></li><li class="disabled"><a>尾页</a></li></ul>';
+						} else {
+							page = page + '<li><a onclick="vm.getpage(' + r + ')">&raquo;</a></li><li><a onclick="vm.getpage(' + max + ')">尾页</a></li></ul>';
+						}
+
+						this.pagetext = page;
+					},
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.post("../../telboom.json", {
+							search: this.search,
+							keyword: this.keyword,
+							nowpage: this.nowpage,
+							pagenum: this.pagenum,
+							orderby: this.orderby
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data,
+									this.search = res.data.modle.search,
+									this.keyword = res.data.modle.keyword,
+									this.nowpage = res.data.modle.nowpage,
+									this.pagenum = res.data.modle.pagenum,
+									this.orderby = res.data.modle.orderby,
+									this.maxpage = res.data.modle.maxpage,
+									this.havenum = res.data.modle.havenum
+								this.dopage(this.nowpage, this.maxpage);
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+
+					},
+					dopagenum(num) {
+						this.pagenum = num;
+						this.getpage();
+						this.open_2=false;
+					},
+					changeOrderby2() {
+						if(this.orderby == "id降序" || this.orderby == '') {
+							this.orderby = "id升序";
+						} else {
+							this.orderby = "id降序";
+						}
+						this.getpage();
+					},
+					setsearch(val) {
+						this.search = val;
+						this.open_1=false;
+					},
+					refresh(){
+						location.href=location.href;
+					},
+					del(id) {
+						var text =" 是否删除记录(id=" + id + ")，若轰炸未完成 将立即停止并删除记录";
+						let that = this;
+						swal({
+							title: "",
+							text: text,
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../telboom.json", {
+								type: 'del',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.getpage();
+									}, 100);
+									swal("删除成功！", "您已经永久删除了这条记录。", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("删除失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					stop(id) {
+						var text =" 是否立即停止轰炸(id=" + id + ")";
+						let that = this;
+						swal({
+							title: "",
+							text: text,
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "停止",
+							closeOnConfirm: false
+						}, function() {
+							// ajax删除记录
+							that.$http.post("../../telboom.json", {
+								type: 'stop',
+								id: id
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.getpage();
+									}, 100);
+									swal("停止成功！", "您已经停止了对该号码的轰炸", "success");
+								} else {
+									swal("停止失败", res.data.message, "error");
+								}
+							}, function() {
+								swal("停止失败", "服务器链接失败！", "error");
+							})
+						});
+					},
+					openselect(id){
+						if(id==1){
+							if(this.open_1==true){
+								this.open_1=false;
+							}else{
+								this.open_1=true;
+							}
+						}else if(id==2){
+							if(this.open_2==true){
+								this.open_2=false;
+							}else{
+								this.open_2=true;
+							}
+						}
+					},
+					add(){
+						var that=this;
+						this.$http.post("../../telboom.json", {
+							type:'add',
+							tel:that.tel,
+							num:that.num
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								layer.alert(res.data.message, {icon:1});
+								setTimeout(function(){
+									that.getpage();
+									that.page=1;
+									that.tel='';
+									that.num='';
+								},200);
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					}
+
+				},
+				mounted: function(){
+					
+					
+					this.getpage();
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>加载中...</title>
+		<link rel="stylesheet" type="text/css" href="admin/css/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="src/css/pay_cc.css" />
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no">
+	</head>
+
+	<body>
+
+		<div>
+			<h3>文件下载</h3>
+			<div class="">
+
+				<hr>
+
+				<h4>
+					文件：<b id="filename">加载中...</b>
+					<br>
+					大小：<span id="filesize">加载中...</span>
+					
+					<span id="filemsg"></span>
+					<br>
+					<br>
+					<div id="b1" style="display: none;">请输入验证码：</div>
+				</h4>
+
+				<div id="b2" style="display: none;height: 40px;" class="input-group">
+					<div class="input-group-addon">
+						<span class="glyphicon glyphicon-picture" style="color: rgb(92, 205, 222);"></span>
+					</div>
+					<input id="code" maxlength="4" type="tel" placeholder="右侧图形数字验证码" class="form-control" style="height: 40px;">
+					<div class="input-group-addon rand" style="height: 40px;width:60px;background-image: url(randcode.img);background-size: 100% 100%;"></div>
+				</div>
+
+				<div id="b3" class="form-group" style="margin-top: 15px;display: none;">
+					<div class="btn btn-primary btn-block">下载</div>
+				</div>
+
+			</div>
+
+		</div>
+
+		<script src="admin/js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="admin/js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			function renderSize(value){ if(value==''){ return "0k"; } var unitArr = new Array("Bytes","KB","MB","GB","TB","PB","EB","ZB","YB"); var index=0, srcsize = parseFloat(value); index=Math.floor(Math.log(srcsize)/Math.log(1024)); var size =srcsize/Math.pow(1024,index); size=size.toFixed(2); return size+unitArr[index]; }
+			
+			$.get('d?type=getinfo&key='+location.href.split("?")[1],function(res){
+				res = JSON.parse(res);
+				if(res.code==1){
+					$("title").html(res.filename);
+					$("#filename").html(res.filename);
+					$("#filesize").html(renderSize(res.filesize));
+					if(res.filemsg!=""){
+						$("#filemsg").html("<br>备注："+res.filemsg);
+					}
+					$("#b1").css("display",'');
+					$("#b2").css("display",'');
+					$("#b3").css("display",'');
+				}else{
+					layer.alert('未找到源文件<br>请检查地址是否正确',{icon: 0});
+					$("title").html('404 - 找不到原文件');
+					$("#filename").html('未找到源文件');
+					$("#filesize").html('未找到源文件');
+					$("#filemsg").html('');
+					$("#b1").css("display",'none');
+					$("#b2").css("display",'none');
+					$("#b3").css("display",'none');
+				}
+			})
+			
+			$(".rand").click(function(){
+				$(".rand").css("background-image",'');
+				$(".rand").css("background-image",'url(randcode.img)');
+			});
+			
+			$('.btn-primary').click(function(){
+				let key = location.href.split("?")[1];
+				let code = $("#code").val();
+				if(code<1000 || code>9999){
+					layer.alert('请输入正确的验证码',{icon: 0});
+				}else{
+					location.href = 'd?type=keydown&key='+key+'&code='+code;
+				}
+			});
+			
+		</script>
+	</body>
+
+</html>

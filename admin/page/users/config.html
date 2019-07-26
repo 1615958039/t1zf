@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>支付接口配置</title>
+		<meta name="keywords" content="H+后台主题,后台bootstrap框架,会员中心主题,后台HTML,响应式后台">
+		<meta name="description" content="H+是一个完全响应式，基于Bootstrap3最新版本开发的扁平化主题，她采用了主流的左右两栏式布局，使用了Html5+CSS3等现代技术">
+
+		<link rel="shortcut icon" href="favicon.ico">
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		
+	    <link href="../../css/animate.css" rel="stylesheet">
+	    <link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+	    
+	    
+	    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		
+	    
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row">
+				
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title  back-change">
+							<h5>开关项</h5>
+						</div>
+						<div class="ibox-content">
+							
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>用户可注册：</b>
+										<div @click="on('reg_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(reg_open==0)">
+											<label>开</label>
+										</div>
+										<div @click="on('reg_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(reg_open!=0)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>强绑imei注册：</b>
+										<div @click="on('reg_onlyimei')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(reg_onlyimei==1)">
+											<label>开</label>
+										</div>
+										<div @click="on('reg_onlyimei')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(reg_onlyimei!=1)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>用户可签到：</b>
+										<div @click="on('qd_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qd_open==0)">
+											<label>开</label>
+										</div>
+										<div @click="on('qd_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qd_open!=0)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>日签到用户列表：</b>
+										<div @click="on('qdlist_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qdlist_open==1)">
+											<label>开</label>
+										</div>
+										<div @click="on('qdlist_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(qdlist_open!=1)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>自定义参数可编辑：</b>
+										<div @click="on('edu_custom')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(edu_custom==1)">
+											<label>开</label>
+										</div>
+										<div @click="on('edu_custom')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(edu_custom!=1)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>绑定imei登陆：</b>
+										<div @click="on('login_imei')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(login_imei==1)">
+											<label>开</label>
+										</div>
+										<div @click="on('login_imei')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(login_imei!=1)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>余额兑换VIP：</b>
+										<div @click="on('mtv_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(mtv_open==0)">
+											<label>开</label>
+										</div>
+										<div @click="on('mtv_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(mtv_open!=0)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>余额兑换积分：</b>
+										<div @click="on('mtj_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(mtj_open==0)">
+											<label>开</label>
+										</div>
+										<div @click="on('mtj_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(mtj_open!=0)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>抽奖系统开放：</b>
+										<div @click="on('cj_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(cj_open==0)">
+											<label>开</label>
+										</div>
+										<div @click="on('cj_open')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(cj_open!=0)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							<div class="row">
+								<div class="col-md-12">
+									<fieldset>
+										<b>抽奖需要是VIP：</b>
+										<div @click="on('cj_isvip')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(cj_isvip==1)">
+											<label>开</label>
+										</div>
+										<div @click="on('cj_isvip')" class="radio radio-info radio-inline">
+											<input type="radio" :checked="(cj_isvip!=1)">
+											<label>关</label>
+										</div>
+									</fieldset>
+								</div>
+							</div>
+							
+							
+						</div>
+					</div>
+					
+				</div>
+				
+				
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>数值填写</h5>
+						</div>
+						<div class="ibox-content">
+							<div class="form-horizontal">
+								
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">注册送积分:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入整数" :disabled="edutype==1" v-model="reg_jf" type="text" class="form-control">
+                                	</div>
+                            	</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">注册送余额:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入非负数余额" :disabled="edutype==1" v-model="reg_money" type="text" class="form-control">
+                                	</div>
+                            	</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">注册送VIP:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入赠送VIP天数" :disabled="edutype==1" v-model="reg_vip" type="text" class="form-control">
+                                	</div>
+                            	</div>
+								
+								<div class="form-group">
+                                	<label class="col-sm-3 control-label">签到送余额:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入赠送VIP天数，0默认不送" :disabled="edutype==1" v-model="qd_money" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                                	
+                            	<div class="form-group">
+                            		<label class="col-sm-3 control-label">签到送积分:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入整数，0默认不送" :disabled="edutype==1" v-model="qd_jf" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">签到送VIP:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="请输入赠送VIP天数，0默认不送" :disabled="edutype==1" v-model="qd_vip" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">余额兑VIP:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="31天VIP需要多少余额" :disabled="edutype==1" v-model="mtv" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">余额兑积分:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="1余额可兑换多少积分" :disabled="edutype==1" v-model="mtj" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">每天抽奖次数:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="默认为1，最高为10" :disabled="edutype==1" v-model="cj_daynum" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">抽奖需要消耗：</label>
+									<div class="col-sm-8">
+                                    	<select :disabled="edutype==1" v-model="cj_needwhat" class="form-control" name="account">
+	                                        <option value="积分">积分</option>
+	                                        <option value="余额">余额</option>
+	                                    </select>
+                                	</div>
+                            	</div>
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">消耗额度:</label>
+									<div class="col-sm-8">
+                                    	<input placeholder="为0则不需要消耗" :disabled="edutype==1" v-model="cj_needvalue" type="text" class="form-control">
+                                	</div>
+                            	</div>
+                            	
+                            	
+                            	<div class="form-group">
+                                	<label class="col-sm-3 control-label">邀请新用户注册送:</label>
+									<div class="col-sm-8">
+										<div class="input-group">
+                                    		<span class="input-group-btn">
+	                                    		<button :disabled="edutype==1" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+	                                    			{{yq_what}}<span class="caret"></span>
+	                                    		</button>
+	                                    		<ul class="dropdown-menu">
+													<li>
+														<a @click="yq_what='积分'">积分</a>
+													</li>
+													<li>
+														<a @click="yq_what='余额'">余额</a>
+													</li>
+													<li>
+														<a @click="yq_what='vip'">vip</a>
+													</li>
+												</ul>
+											</span>
+											<input placeholder="为0则不赠送" :disabled="edutype==1" v-model="yq_value" type="text" class="form-control">
+										</div>
+                                	</div>
+                            	</div>
+                            	
+                            				
+								
+								<div class="form-group">
+									<div class="col-sm-offset-3 col-sm-8">
+										
+										<div v-show="edutype==2" @click="edu" class="btn btn-primary ">
+											<i class="fa fa-check"></i>&nbsp;保存
+										</div>
+										
+										<div @click="edutype=2" v-show="edutype==1" class="btn btn-info ">
+											<i class="fa fa-paste"></i>&nbsp;编辑
+										</div>
+										
+									</div>
+								</div>
+								
+								
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+		</div>
+
+		
+		<script src="../../js/jquery.min.js?v=2.1.4"></script>
+		<script src="../../js/bootstrap.min.js?v=3.3.6"></script>
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el:"#app",
+				data:{
+					edutype:'1',
+					
+					reg_jf:'',
+					reg_vip:'',
+					reg_money:'',
+					qd_jf:'',
+					qd_vip:'',
+					qd_money:'',
+					mtv:'',
+					mtj:'',
+					cj_needwhat:'',
+					cj_needvalue:'',
+					cj_daynum:'',
+					yq_what:'积分',
+					yq_value:'',
+					
+					cj_isvip:'',
+					cj_open:'',
+					mtv_open:'',
+					mtj_open:'',
+					reg_open:'1',
+					reg_onlyimei:'',
+					qd_open:'1',
+					qdlist_open:'1',
+					edu_custom:'1',
+					login_imei:'',
+					
+					
+				},
+				methods:{
+					getpage(){
+						var that = this;
+						this.$http.get("../../usersconfig.json").then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								
+								
+								that.reg_jf=res.data.data.reg_jf;
+								that.reg_vip=res.data.data.reg_vip;
+								that.reg_money=res.data.data.reg_money;
+								that.qd_jf=res.data.data.qd_jf;
+								that.qd_vip=res.data.data.qd_vip;
+								that.qd_money=res.data.data.qd_money;
+								that.mtj=res.data.data.mtj;
+								that.mtv=res.data.data.mtv;
+								that.cj_needwhat=res.data.data.cj_needwhat;
+								that.cj_needvalue=res.data.data.cj_needvalue;
+								that.cj_daynum=res.data.data.cj_daynum;
+								
+								that.reg_open=res.data.data.reg_open;
+								that.reg_onlyimei=res.data.data.reg_onlyimei;
+								that.qd_open=res.data.data.qd_open;
+								that.qdlist_open=res.data.data.qdlist_open;
+								that.edu_custom=res.data.data.edu_custom;
+								that.login_imei=res.data.data.login_imei;
+								that.mtv_open=res.data.data.mtv_open;
+								that.mtj_open=res.data.data.mtj_open;
+								that.cj_open=res.data.data.cj_open;
+								that.cj_isvip=res.data.data.cj_isvip;
+								
+								
+								that.yq_value=res.data.data.yq_value;
+								
+								if(res.data.data.yq_what==''){
+									that.yq_what='积分';
+								}else{
+									that.yq_what=res.data.data.yq_what;
+								}
+								
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					edu(){
+						var that = this;
+						this.$http.post("../../usersconfig.json",{
+							
+							type:'edu',
+							reg_jf:that.reg_jf,
+							reg_vip:that.reg_vip,
+							reg_money:that.reg_money,
+							qd_jf:that.qd_jf,
+							qd_vip:that.qd_vip,
+							qd_money:that.qd_money,
+							mtv:that.mtv,
+							mtj:that.mtj,
+							cj_needwhat:that.cj_needwhat,
+							cj_needvalue:that.cj_needvalue,
+							cj_daynum:that.cj_daynum,
+							yq_value:that.yq_value,
+							yq_what:that.yq_what,
+							
+						}).then(function(res) {
+							if(res.data.code == "1"){ //获取列表成功，更新变量
+								setTimeout(function(){
+									that.getpage()
+									that.edutype=1;
+								},200);
+								layer.alert('修改成功！',{icon:1});
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					},
+					on(type){
+						var that = this;
+						this.$http.post("../../usersconfig.json",{
+							type:type
+						}).then(function(res) {
+							if(res.data.code == "1"){ //获取列表成功，更新变量
+								that.getpage()
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert(res.data.message, {icon:2});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+					}
+				},
+				mounted(){
+					this.getpage();
+				}
+			})
+		</script>
+	</body>
+
+</html>

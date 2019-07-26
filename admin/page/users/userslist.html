@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+		<title>用户列表</title>
+		
+		<link href="../../css/bootstrap.min.css?v=3.3.6" rel="stylesheet">
+		<link href="../../css/font-awesome.css?v=4.4.0" rel="stylesheet">
+		<link href="../../css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css" rel="stylesheet">
+		<link href="../../css/plugins/sweetalert/sweetalert.css" rel="stylesheet">
+		
+		<link href="../../css/animate.css" rel="stylesheet">
+		<link href="../../css/style.css?v=4.1.0" rel="stylesheet">
+		<link rel="stylesheet" type="text/css" href="../../css/jiege.css"/>
+		<script src="../../js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/sweetalert/sweetalert.min.js"></script>
+		
+		<script src="../../js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="../../js/plugins/layer/laydate/laydate.js"></script>
+		
+		
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	</head>
+
+	<body class="gray-bg">
+		<div id="app" class="wrapper wrapper-content animated fadeInRight">
+			<div class="row" v-show="pagetype==1">
+
+				<div class="col-sm-12">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>用户信息列表</h5>
+							<div class="ibox-tools">
+								<a @click="refresh" class="collapse-link">
+									<i class="glyphicon glyphicon-refresh"></i>重载
+								</a>
+							</div>
+						</div>
+						<div class="ibox-content">
+
+							<div class="row" style="margin-bottom: 5px;">
+								<div class="col-lg-4">
+									<div class="input-group">
+										
+
+										<input v-model="keyword" type="text" class="form-control" :placeholder="place">
+										
+										<span class="input-group-btn" :class="{'open':open_1}">
+											
+                                            <button @click="openselect(1)" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{search}}<span class="caret"></span></button>
+											<ul class="dropdown-menu">
+												<li v-for="item in searchList">
+													<a @click="setsearch(item)">{{item}}</a>
+												</li>
+											</ul>
+											
+											
+											<button @click="getpage" class="btn btn-primary" type="button">搜索</button>
+										</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="table-responsive">
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>用户名</th>
+											<th @click="cgob('积分')" :class="{'dropup':(orderby!='积分降序'),'textred':(orderby=='积分升序' || orderby=='积分降序')}">
+												积分<span class="caret"></span>
+											</th>
+											<th @click="cgob('余额')" :class="{'dropup':(orderby!='余额降序'),'textred':(orderby=='余额升序' || orderby=='余额降序')}">
+												余额<span class="caret"></span>
+											</th>
+											<th @click="cgob('会员')" :class="{'dropup':(orderby!='会员降序'),'textred':(orderby=='会员升序' || orderby=='会员降序')}">
+												会员<span class="caret"></span>
+											</th>
+											<th @click="cgob('注册')" :class="{'dropup':(orderby!='注册降序'),'textred':(orderby=='注册升序' || orderby=='注册降序')}">
+												注册日期<span class="caret"></span>
+											</th>
+											<th>自定义参数</th>
+											<th>状态</th>
+											<th>操作</th>
+										</tr>
+									</thead>
+									
+									<tbody>
+										<tr v-for="item in items">
+											<th>{{ item.user }}</th>
+											<th>{{ item.jf }}</th>
+											<th>{{ item.money }}</th>
+											<th>{{ item.vip }}</th>
+											<th>{{ item.regtime }}</th>
+											<th>{{ item.custom | custom}}</th>
+											<th :class="{'textred':(item.zt=='封号')}">{{ item.zt }}</th>
+											<th>
+												<span @click="getuserinfo(item.user)" class="badge badge-info">详情</span>
+											</th>
+										</tr>
+										<tr v-show="items.length==0">
+											<th @click="refresh">暂时没有数据哦~  (点我可以刷新页面)</th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+											<th></th>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<p>
+								<div>
+									共 {{havenum}} 条数据,每页
+									<span class="btn-group dropup" :class="{'open':open_2}">
+										<button @click="openselect(2)" class="btn btn-white btn-xs dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								    		{{pagenum}}<span class="caret"></span>
+										</button>
+										<ul class="dropdown-menu">
+											<li>
+												<a @click="dopagenum(10)">10</a>
+											</li>
+											<li>
+												<a @click="dopagenum(30)">30</a>
+											</li>
+											<li>
+												<a @click="dopagenum(50)">50</a>
+											</li>
+											<li>
+												<a @click="dopagenum(100)">100</a>
+											</li>
+										</ul>
+									</span>
+									<span>条</span>
+								</div>
+
+								<div v-html="pagetext">
+
+								</div>
+
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			
+			
+			
+			<div class="row" v-show="pagetype==2">
+
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								<span @click="pagetype=1"><i class="glyphicon glyphicon-menu-left"></i>返回用户列表</span>
+							</h5>
+						</div>
+						<div class="ibox-content">
+							
+							<p>账号:<font color="red">{{user}}</font></p>
+							<p>注册日期:{{reg_time}}</p>
+							<p>注册IP:{{reg_ip}}</p>
+							<p>设备号:{{imei | imei}}</p>
+							<p>状态：{{zt}}</p>
+							<p>最近在线:{{online}}</p>
+							<p>积分日志：<a @click="gologlist('jf')">点我查看</a></p>
+							<p>余额日志：<a @click="gologlist('money')">点我查看</a></p>
+							<p>会员日志：<a @click="gologlist('vip')">点我查看</a></p>
+							<p>自定义参数日志：<a @click="gologlist('custom')">点我查看</a></p>
+							<br>
+							<br>
+							
+							<span @click="fh(user)" v-show="zt=='正常'" class="badge badge-info" title="锁定，封号" style="background-color: #1ab394;"><span class="fa fa-unlock-alt"></span>&nbsp;&nbsp;封号</span>
+							<span @click="fh(user)" v-show="zt=='封号'" class="badge badge-info" title="解锁，解封" style="background-color: #f8ac59;"><span class="fa fa-unlock"></span>&nbsp;&nbsp;解封</span>
+							<span @click="del(user)" class="badge badge-info" title="永久删除账号" style="background-color: #ed5565;"><span class="fa fa-trash-o"></span>&nbsp;&nbsp;永久删除</span>
+							
+							
+						</div>
+					</div>
+				</div>
+				
+
+				<div class="col-sm-6">
+					<div class="ibox float-e-margins">
+						<div class="ibox-title">
+							<h5>
+								编辑数据
+							</h5>
+						</div>
+						<div class="ibox-content">
+							
+							<div class="form-horizontal m-t">
+								
+	                            <div class="form-group">
+	                                <label class="col-sm-3 control-label">积分：</label>
+	                                <div class="col-sm-8">
+	                                    <input :disabled="(isedu==false)" v-model="jf" placeholder="整数" type="text" class="form-control">
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="form-group">
+	                                <label class="col-sm-3 control-label">余额：</label>
+	                                <div class="col-sm-8">
+	                                    <input :disabled="(isedu==false)" v-model="money" placeholder="非负金额" type="text" class="form-control">
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="form-group">
+	                                <label class="col-sm-3 control-label">vip到期：</label>
+	                                <div class="col-sm-8">
+	                                	<div class="input-group m-b">
+		                                    <input :disabled="(isedu==false)" v-model="viptime" placeholder="非负金额" type="text" class="form-control" onclick="laydate({istime: true, format: 'YYYY-MM-DD hh:mm:ss',choose: function(dates){vm.viptime=dates}})">
+		                                    
+		                                    <div class="input-group-btn" :class="{'open':open_3}">
+	                                            <button @click="openselect(3)" :disabled="(isedu==false)" type="button" class="btn btn-white dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{vipday}}天<span class="caret"></span></button>
+												<ul class="dropdown-menu">
+													<li>
+														<a @click="addday(31,1)">原基础上加31天</a>
+													</li>
+													<li>
+														<a @click="addday(7)">7天后到期</a>
+													</li>
+													<li>
+														<a @click="addday(31)">31天后到期</a>
+													</li>
+													<li>
+														<a @click="addday(186)">186天后到期</a>
+													</li>
+													<li>
+														<a @click="addday(366)">366天后到期</a>
+													</li>
+												</ul>
+	                                        </div>
+		                                    
+	                                    </div>
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="form-group">
+	                                <label class="col-sm-3 control-label">自定义参数：</label>
+	                                <div class="col-sm-8">
+	                                    <textarea :disabled="(isedu==false)" v-model="custom" class="form-control"></textarea>
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="form-group">
+	                                <label class="col-sm-3 control-label">新密码：</label>
+	                                <div class="col-sm-8">
+	                                    <input :disabled="(isedu==false)" v-model="newpass" placeholder="不填则不做修改" type="text" class="form-control">
+	                                </div>
+	                            </div>
+	                            
+	                            <div class="form-group">
+	                                <div class="col-sm-4 col-sm-offset-3">
+	                                    
+	                                    <button @click="doedu" v-show="isedu==true" class="btn btn-primary " type="button"><i class="fa fa-check"></i>&nbsp;保存</button>
+	                                    <button v-show="isedu==false" @click="isedu=true" class="btn btn-info " type="button"><i class="fa fa-paste"></i>&nbsp;编辑</button>
+	                                    <button @click="nodoedu" v-show="isedu==true" class="btn btn-warning " type="button"><i class="fa fa-warning"></i>&nbsp;<span class="bold">取消</span></button>
+	                                    
+	                                </div>
+	                            </div>
+	                        </div>
+							
+							
+							
+						</div>
+					</div>
+				</div>
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			</div>
+			
+			
+			
+		</div>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+		<script type="text/javascript">
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					place: '用户账号',
+					pagetext: '',
+					items: [],
+
+					search: '账号',
+					keyword: '',
+					nowpage: '1',
+					pagenum: '30',
+					orderby: '',
+
+					maxpage: '',
+					havenum: '',
+
+					searchList: ['账号','注册时间','imei','自定义内容','状态'],
+					
+					open_1:false,
+					open_2:false,
+					open_3:false,
+					
+					pagetype:1,// 1首页，2用户详情
+					isedu:false,
+					custom:'4444',
+					viptime:'',
+					vipday:'',
+					imei:'',
+					jf:'',
+					money:'',
+					reg_ip:'',
+					reg_time:'',
+					user:'',
+					zt:'',
+					newpass:'',
+					online:'',
+					is_xyy:'',
+				},
+				filters: {
+					custom(val){
+						if(val==''){
+							return "未设置自定义参数";
+						}else{
+							return val;
+						}
+					},
+					imei(val){
+						if(val==''){
+							return "未提交设备号";
+						}else{
+							return val;
+						}
+					},
+					
+				},
+				watch: {
+					search(val) {
+						if(val == "账号") {
+							this.place = "用户账号";
+						} else if(val == "注册时间"){
+							this.place = "日期描述";
+						}else if(val=='imei'){
+							this.place = "imei号码";
+						}else if(val=='自定义内容'){
+							this.place ='关键字';
+						}else if(val=='状态'){
+							this.place ='封号、正常';
+						}else {
+							this.place = "关键词";
+						}
+					},
+					viptime(val){
+						let timestamp = parseInt(new Date().getTime()/1000);
+						let d = new Date(val);
+						let t = d.getTime(d);
+						t = parseInt(t/1000);
+						let c = t - timestamp;
+						if(c<=0){
+							this.vipday='0';
+							return false;
+						}
+						this.vipday=Math.ceil((c/86400)*10)/10;
+					}
+				},
+				methods: {
+					dopage(now, max) {
+						now = Number(now);
+						if(now < 1 || !now || now == '') {
+							now = 1;
+						}
+						let a = [];
+						let b = [];
+						for(let i = 0; i < 5; i++) {
+							a[i] = now - 2 + i;
+							if(a[i] >= 1 && a[i] <= max) {
+								b.push(a[i]);
+							}
+						}
+						let l = now - 1;
+						let r = now + 1;
+
+						if(now == 1) {
+							var page = '<ul class="pagination"><li class="disabled"><a>首页</a></li><li class="disabled"><a>&laquo;</a></li>';
+						} else {
+							var page = '<ul class="pagination"><li><a  onclick="vm.getpage(1)">首页</a></li><li><a onclick="vm.getpage(' + l + ')">&laquo;</a></li>';
+						}
+
+						for(i = 0; i < b.length; i++) {
+							if(b[i] == now) {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')"><font color="red">' + b[i] + '</font></a></li>';
+							} else {
+								page = page + '<li><a onclick="vm.getpage(' + b[i] + ')">' + b[i] + '</a></li>';
+							}
+						}
+
+						if(now == max) {
+							page = page + '<li  class="disabled"><a>&raquo;</a></li><li class="disabled"><a>尾页</a></li></ul>';
+						} else {
+							page = page + '<li><a onclick="vm.getpage(' + r + ')">&raquo;</a></li><li><a onclick="vm.getpage(' + max + ')">尾页</a></li></ul>';
+						}
+
+						this.pagetext = page;
+					},
+					getpage(id) { // id -> 需要跳转的页数，默认不填为1
+						if(!id) {
+							if(this.nowpage < 0 || this.nowpage == '') {
+								this.nowpage = 1;
+							}
+						} else {
+							this.nowpage = id;
+						}
+						this.$http.post("../../users.list", {
+							search: this.search,
+							keyword: this.keyword,
+							nowpage: this.nowpage,
+							pagenum: this.pagenum,
+							orderby: this.orderby
+						}).then(function(res) {
+							if(res.data.code == "1") { //获取列表成功，更新变量
+								this.items = res.data.data,
+									this.search = res.data.modle.search,
+									this.keyword = res.data.modle.keyword,
+									this.nowpage = res.data.modle.nowpage,
+									this.pagenum = res.data.modle.pagenum,
+									this.orderby = res.data.modle.orderby,
+									this.maxpage = res.data.modle.maxpage,
+									this.havenum = res.data.modle.havenum
+								this.dopage(this.nowpage, this.maxpage);
+							} else if(res.data.code == '-1') {
+								window.parent.frames.location.href = "../../html/login.html"
+							} else {
+								layer.alert('获取数据失败！请刷新页面重试', {
+									icon: 2
+								});
+							}
+						}, function() {
+							layer.alert('服务器链接失败！请检查您的网络设置', {
+								icon: 2
+							});
+						})
+
+					},
+					dopagenum(num) {
+						this.pagenum = num;
+						this.getpage();
+						this.open_2=false;
+					},
+					cgob(sel){
+						let sele=sel+'升序';
+						if(this.orderby==sele){
+							this.orderby=sel+'降序';
+						}else{
+							this.orderby=sele;
+						}
+						this.getpage();
+					},
+					setsearch(val) {
+						this.search = val;
+						this.open_1=false;
+					},
+					refresh(){
+						location.href=location.href;
+					},
+					openselect(id){
+						if(id==1){
+							if(this.open_1==true){
+								this.open_1=false;
+							}else{
+								this.open_1=true;
+							}
+						}else if(id==2){
+							if(this.open_2==true){
+								this.open_2=false;
+							}else{
+								this.open_2=true;
+							}
+						}else if(id==3){
+							if(this.open_3==true){
+								this.open_3=false;
+							}else{
+								this.open_3=true;
+							}
+						}
+					},
+					del(user){
+						var that=this;
+						swal({
+							title: "",
+							text: "是否永久删除用户(" + user + ")，删除之后无法恢复，请谨慎操作",
+							type: "warning",
+							showCancelButton: true,
+							confirmButtonColor: "#DD6B55",
+							confirmButtonText: "删除",
+							closeOnConfirm: false
+						}, function() {
+							that.$http.post("../../users.list", {
+								type: 'del',
+								user: user
+							}).then(function(res) {
+								if(res.data.code == 1) {
+									setTimeout(function() {
+										that.refresh();
+									}, 2000);
+									swal("删除成功！", "您已经永久删除此用户，以及该账号的所有记录。2s后刷新", "success");
+								} else {
+									swal("删除失败", res.data.message, "error");
+								}
+							}, function() {
+								layer.alert('链接服务器失败！', {icon: 2});
+							});
+						});
+					},
+					fh(user){
+						var that=this;
+						this.$http.post("../../users.list", {
+							type: 'fh',
+							user: user
+						}).then(function(res) {
+							if(res.data.code == 1) {
+								setTimeout(function() {
+									that.getpage();
+									that.getuserinfo(user);
+								}, 100);
+								layer.alert(res.data.message, {icon: 1});
+							} else {
+								layer.alert(res.data.message,{icon: 2});
+							}
+						}, function() {
+							layer.alert('链接服务器失败！', {icon: 2});
+						})
+					},
+					getuserinfo(user){
+						var that=this;
+						this.$http.post("../../users.list", {
+							type: 'getuserinfo',
+							user:user
+						}).then(function(res) {
+							if(res.data.code == 1) {
+								that.pagetype=2;
+								that.custom=res.data.model.custom;
+								that.vipday=0;
+								that.viptime=res.data.model.vip;
+								that.imei=res.data.model.imei;
+								that.jf=res.data.model.jf;
+								that.money=res.data.model.money;
+								that.reg_ip=res.data.model.reg_ip;
+								that.reg_time=res.data.model.reg_time;
+								that.user=res.data.model.user;
+								that.zt=res.data.model.zt;
+								that.isedu=false;
+								that.online=res.data.model.online;
+								that.is_xyy=res.data.model.is_xyy;
+							} else {
+								layer.alert(res.data.message,{icon: 2});
+							}
+						}, function() {
+							layer.alert('链接服务器失败！', {icon: 2});
+						})
+					},
+					nodoedu(){
+						this.getuserinfo(this.user);
+					},
+					doedu(){
+						if(this.user==''){
+							layer.alert('获取用户账号失败！', {icon: 2});
+							return false;
+						}
+						var that= this;
+						this.$http.post("../../users.list", {
+							type: 'doedu',
+							user:that.user,
+							jf:that.jf,
+							money:that.money,
+							viptime:that.viptime,
+							custom:that.custom,
+							newpass:that.newpass
+						}).then(function(res) {
+							if(res.data.code == 1) {
+								layer.alert(res.data.message,{icon: 1});
+								that.viptime='';
+								that.vipday='';
+								that.newpass='';
+								that.getuserinfo(that.user);
+							} else {
+								layer.alert(res.data.message,{icon: 2});
+							}
+						}, function() {
+							layer.alert('链接服务器失败！', {icon: 2});
+						})
+					},
+					addday(day,a){
+						if(!a){
+							this.viptime = format(parseInt(new Date().getTime())+day*86400000);
+						}else{
+							//原时间增加
+							let timestamp = parseInt(new Date().getTime()/1000);
+							let d = new Date(this.viptime);
+							let t = d.getTime(d);
+							t = parseInt(t/1000);
+							let c = t - timestamp;
+							if(c<=0){
+								t = timestamp;
+							}
+							this.viptime = format(t*1000+day*86400000);
+						}
+						this.open_3=false;
+						function add0(m){return m<10?'0'+m:m }
+						function format(shijianchuo){
+							var time = new Date(shijianchuo);
+							var y = time.getFullYear();
+							var m = time.getMonth()+1;
+							var d = time.getDate();
+							var h = time.getHours();
+							var mm = time.getMinutes();
+							var s = time.getSeconds();
+							return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
+						}
+					},
+					gologlist(val){
+						location.href='log.html?user='+this.user+'&listtype='+val;
+					},
+					xyy(user){
+						this.$http.post("../../users.list", {
+							type: 'xyy',
+							user:user,
+						}).then(function(res) {
+							layer.alert(res.data.message);							
+						}, function() {
+							layer.alert('链接服务器失败！', {icon: 2});
+						})
+					}
+				},
+				mounted: function() {
+					this.getpage();
+				}
+
+			})
+		</script>
+	</body>
+
+</html>

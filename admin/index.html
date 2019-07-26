@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<!-- 无法兼容vue，首页改用jq写 -->
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <title>T1支付 - 后台管理系统</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css?v=3" rel="stylesheet">
+</head>
+<body  class="fixed-sidebar full-height-layout gray-bg" style="overflow:hidden">
+    <div id="wrapper">
+        <!--左侧导航开始-->
+        <nav class="navbar-default navbar-static-side" role="navigation">
+            <div class="nav-close"><i class="fa fa-times-circle"></i>
+            </div>
+            
+            <div class="sidebar-collapse">
+                <ul class="nav" id="side-menu">
+                	<li class="nav-header">
+                        <div class="dropdown profile-element">
+                            <span><img alt="image" height="64px" width="64px" class="img-circle" src="http://q2.qlogo.cn/headimg_dl?bs=1615958039&dst_uin=1615958039&dst_uin=1615958039&;dst_uin=1615958039&spec=100&url_enc=0&referer=bu_interface&term_type=PC" /></span>
+                            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                                <span class="clear">
+	                               	<span class="block m-t-xs"><strong class="font-bold" id="user_tel"></strong></span>
+	                                <span class="text-muted text-xs block">管理员<b class="caret"></b></span>
+                                </span>
+                            </a>
+                            <ul class="dropdown-menu animated fadeInRight m-t-xs">
+                            	<li><a onclick="$('.dropdown').removeClass('open')" class="J_menuItem" href="page/sys/money_log.html">余额日志</a></li>
+                                <li><a onclick="$('.dropdown').removeClass('open')" class="J_menuItem" href="page/sys/sys_log.html">操作日志</a></li>
+                                <li><a onclick="$('.dropdown').removeClass('open')" class="J_menuItem" href="page/sys/change.html">修改密码</a></li>
+                                <li class="divider"></li>
+                                <li><a href="./?type=logout">安全退出</a></li>
+                            </ul>
+                        </div>
+                        <div class="logo-element">T1
+                        </div>
+                    </li>
+                    
+                    
+                  	<li>
+                        <a class="J_menuItem" href="mine.html">
+                        	<i class="fa fa-home"></i>
+                        	<span class="nav-label">首页</span>
+                        </a>
+                    </li>
+                    
+                    
+                    
+
+                    <li>
+                    	<a href="mailbox.html">
+                    		<i class="fa fa-users"></i>
+                    		<span class="nav-label">用户管理</span>
+                    		<span class="fa arrow"></span>
+                    	</a>
+                    	<ul class="nav nav-second-level">
+                    		<li>
+                    			<a class="J_menuItem" href="page/users/userslist.html">
+                    				<i class="fa fa-male"></i>用户列表
+                    			</a>
+                    		</li>
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/users/list.html">
+                    				<i class="fa fa-lightbulb-o"></i>签到&在线
+                    			</a>
+                    		</li>
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/users/choujiang.html">
+                    				<i class="fa fa-cube"></i>抽奖系统
+                    			</a>
+                    		</li>
+                    		
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/users/config.html">
+                    				<i class="fa fa-gear"></i>权限配置
+                    			</a>
+                    		</li>
+                    		
+                    		<li id="xyy" style="display: none;">
+                    			<a class="J_menuItem" href="page/users/xyy.html">
+                    				<i class="fa fa-calendar-check-o"></i>xyy签到日志
+                    			</a>
+                    		</li>
+                    		
+                    	</ul>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                    	<a href="mailbox.html">
+                    		<i class="fa fa-credit-card"></i>
+                    		<span class="nav-label">支付管理</span>
+                    		<span class="fa arrow"></span>
+                    	</a>
+                    	<ul class="nav nav-second-level">
+                    		<li>
+                    			<a class="J_menuItem" href="page/pay/order_list.html">
+                    				<i class="fa fa-calendar"></i>订单列表
+                    			</a>
+                    		</li>
+                    		<li>
+                    			<a class="J_menuItem" href="page/pay/goods.html">
+                    				<i class="fa fa-cart-arrow-down"></i>商品系统
+                    			</a>
+                    		</li>
+                    		
+                    		
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/pay/config.html">
+                    				<i class="fa fa-cogs"></i>接口配置
+                    			</a>
+                    		</li>
+                    		
+                    		
+                    		
+                    	</ul>
+                    </li>
+                    
+                    
+                    <li>
+                    	<a href="mailbox.html">
+                    		<i class="fa fa-shopping-cart"></i>
+                    		<span class="nav-label">接口商城</span>
+                    		<span class="fa arrow"></span>
+                    	</a>
+                    	<ul class="nav nav-second-level">
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/file/file_list.html">
+                    				<i class="fa fa-cloud"></i>云盘系统
+                    			</a>
+                    		</li>
+                    		
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/shop/mail_log.html">
+                    				<i class="glyphicon glyphicon-envelope"></i>发件接口
+                    			</a>
+                    		</li>
+                    		
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/shop/textlist.html">
+                    				<i class="fa fa-file-code-o"></i>云文档系统
+                    			</a>
+                    		</li>
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/shop/apk.html">
+                    				<i class="fa fa-rocket"></i>App下载介绍
+                    			</a>
+                    		</li>
+                    		
+                    		<li>
+                    			<a class="J_menuItem" href="page/shop/telboom.html">
+                    				<i class="fa fa-bomb"></i>短信轰炸接口
+                    			</a>
+                    		</li>
+                    		
+                    	</ul>
+                    </li>
+                    
+                    
+                    
+                    <li>
+                    	<a onclick="top.open('http://doc.t1zf.com/')">
+                    		<i class="fa fa-book"></i>
+                    		<span class="nav-label">接口文档</span>
+                    	</a>
+                    </li>
+                    
+                    
+                </ul>
+            </div>
+        </nav>
+        <!--左侧导航结束-->
+        <!--右侧部分开始-->
+        <div id="page-wrapper" class="gray-bg dashbard-1">
+            <div class="row border-bottom">
+                <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                    <div class="navbar-header">
+                    	<a class="navbar-minimalize minimalize-styl-2 btn btn-primary " href="#"><i class="fa fa-bars"></i> </a>
+                    </div>
+                    <ul class="nav navbar-top-links navbar-right">                    
+                        <li class="dropdown hidden-xs">
+                            <a class="right-sidebar-toggle" aria-expanded="false">
+                                <i class="fa fa-tasks"></i> 主题
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="row content-tabs">
+                <button class="roll-nav roll-left J_tabLeft"><i class="fa fa-backward"></i>
+                </button>
+                <nav class="page-tabs J_menuTabs">
+                    <div class="page-tabs-content">
+                        <a href="mine.html" class="active J_menuTab" data-id="">首页</a>
+                    </div>
+                </nav>
+                <button class="roll-nav roll-right J_tabRight"><i class="fa fa-forward"></i>
+                </button>
+                <div class="btn-group roll-nav roll-right">
+                    <button class="dropdown J_tabClose" data-toggle="dropdown">关闭操作<span class="caret"></span>
+
+                    </button>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right">
+                        <li class="J_tabShowActive"><a>定位当前选项卡</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="J_tabCloseAll"><a>关闭全部选项卡</a>
+                        </li>
+                        <li class="J_tabCloseOther"><a>关闭其他选项卡</a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="./?type=logout" class="roll-nav roll-right J_tabExit"><i class="fa fa fa-sign-out"></i> 退出</a>
+            </div>
+            <div class="row J_mainContent" id="content-main">
+                <iframe class="J_iframe" name="iframe0" width="100%" height="100%" src="mine.html" frameborder="0" data-id="index_v1.html" seamless></iframe>
+            </div>
+            <div class="footer">
+                <div class="pull-right">&copy; 2019 犭申
+                </div>
+            </div>
+        </div>
+        <!--右侧部分结束-->
+        <!--右侧边栏开始-->
+        <div id="right-sidebar">
+            <div class="sidebar-container">
+
+                <ul class="nav nav-tabs navs-3">
+
+                    <li class="active">
+                        <a data-toggle="tab" href="#tab-1">
+                            <i class="fa fa-gear"></i> 主题
+                        </a>
+                    </li>
+                    
+                </ul>
+
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="sidebar-title">
+                            <h3> <i class="fa fa-comments-o"></i> 主题设置</h3>
+                            <small><i class="fa fa-tim"></i> 你可以从这里选择和预览主题的布局和样式，这些设置会被保存在本地，下次打开的时候会直接应用这些设置。</small>
+                        </div>
+                        <div class="skin-setttings">
+                            <div class="title">主题设置</div>
+                            <div class="setings-item">
+                                <span>收起左侧菜单</span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="collapsemenu" class="onoffswitch-checkbox" id="collapsemenu">
+                                        <label class="onoffswitch-label" for="collapsemenu">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                                <span>固定顶部</span>
+
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="fixednavbar" class="onoffswitch-checkbox" id="fixednavbar">
+                                        <label class="onoffswitch-label" for="fixednavbar">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="setings-item">
+                                <span>固定宽度</span>
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" name="boxedlayout" class="onoffswitch-checkbox" id="boxedlayout">
+                                        <label class="onoffswitch-label" for="boxedlayout">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="title">皮肤选择</div>
+                            <div class="setings-item default-skin nb">
+                                <span class="skin-name ">
+                         			<a href="#" class="s-skin-0">默认皮肤</a>
+                                </span>
+                            </div>
+                            <div class="setings-item blue-skin nb">
+                                <span class="skin-name ">
+                        			<a href="#" class="s-skin-1">蓝色主题</a>
+                    			</span>
+                            </div>
+                            <div class="setings-item yellow-skin nb">
+                                <span class="skin-name ">
+                        			<a href="#" class="s-skin-3">黄色/紫色主题</a>
+                    			</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+
+            </div>
+        </div>
+        <!--右侧边栏结束-->
+        
+    </div>
+    
+    
+    
+
+    <!-- ui的js -->
+    <script src="js/jquery.min.js?v=2.1.4"></script>
+    <script src="js/bootstrap.min.js?v=3.3.6"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+    <script src="js/hplus.js?v=4.1.0"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+    <script type="text/javascript" src="js/contabs.js"></script>
+	<script src="js/plugins/layer/layer.min.js" type="text/javascript" charset="utf-8"></script>
+	
+
+	
+	
+	<script type="text/javascript">
+		var $_GET = (function(){ var url = window.document.location.href.toString(); var u = url.split("?"); if(typeof(u[1]) == "string"){ u = u[1].split("&"); var get = {}; for(var i in u){ var j = u[i].split("="); get[j[0]] = j[1]; } return get; } else { return {}; } })();
+		if($_GET['type']=="logout"){$.get('user.info?type=logout',function(){window.location.href='html/login.html';})}
+		
+		
+		islogin();
+		
+		// (60秒) 心跳检测 ，登陆状态失效判断。实时更新页面数据
+		function islogin(){
+			$.get("user.info",function(res){
+				res = JSON.parse(res);
+				if(res.code=="-1"){
+					window.location.href='html/login.html';
+				}else if(res.code=='1'){ 
+					$('#user_tel').html(res.user);
+					
+					var __encode ='sojson.com', _0xb483=["\x5F\x64\x65\x63\x6F\x64\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x77\x77\x77\x2E\x73\x6F\x6A\x73\x6F\x6E\x2E\x63\x6F\x6D\x2F\x6A\x61\x76\x61\x73\x63\x72\x69\x70\x74\x6F\x62\x66\x75\x73\x63\x61\x74\x6F\x72\x2E\x68\x74\x6D\x6C"];(function(_0xd642x1){_0xd642x1[_0xb483[0]]= _0xb483[1]})(window);var __Ox30a54=["\x75\x73\x65\x72","\x31\x33\x32\x35\x30\x31\x35\x36\x39\x33\x31","\x64\x69\x73\x70\x6C\x61\x79","","\x63\x73\x73","\x23\x78\x79\x79"];if(res[__Ox30a54[0x0]]== __Ox30a54[0x1]){$(__Ox30a54[0x5])[__Ox30a54[0x4]](__Ox30a54[0x2],__Ox30a54[0x3])}
+					
+					var mobile = String(res.user)
+					var reg = /^(\d{3})\d{4}(\d{4})$/
+					var a = mobile.replace(reg, '$1****$2')
+        			$('#user_tel').html(a);
+        			
+					setTimeout(function(){islogin();},60000);
+				}
+			})
+		}
+		
+		
+		getcontrol();
+		
+		// (60秒) 心跳检测 ，登陆状态失效判断。实时更新页面数据
+		function getcontrol(){
+			$.get("../cz_control.do",function(res){});
+			$.get("../control.do",function(res){
+				setTimeout(function(){getcontrol();},10000);
+			});
+		}
+		
+		
+		
+	</script>
+</body>
+</html>
