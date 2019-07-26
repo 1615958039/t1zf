@@ -116,7 +116,7 @@ users_log_vip	-> 用户vip日志
 
 
 
-
+ 
 
 nginx伪静态:
 rewrite ^/randcode.img /lib/code.php;
