@@ -88,7 +88,7 @@
 		$orderid = $_REQUEST['orderid'];
 		if(md5($key.$orderid.$admin['token'])!=$token)code(["code"=>"0","message"=>"token校验失败！"]);
 		if(!$orderid)code(["code"=>"0","message"=>"请提交订单号！"]);
-		$res = $sql("SELECT * FROM pay_order WHERE id='{$orderid}' AND admin_id='".$admin['id']."' ");
+		$res = $sql("SELECT * FROM pay_order WHERE orderid='{$orderid}' AND admin_id='".$admin['id']."' ");
 		if($res['isdo']==1){
 			code(["code"=>"1","message"=>"获取成功！","km"=>$res['do_msg']]);
 		}else if($res['ispay']==1){
