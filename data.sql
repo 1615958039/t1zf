@@ -1,23 +1,25 @@
 -- phpMyAdmin SQL Dump
--- version phpStudy 2014
--- http://www.phpmyadmin.net
+-- version 4.7.9
+-- https://www.phpmyadmin.net/
 --
--- 主机: localhost
--- 生成日期: 2019 �?07 �?25 �?15:02
--- 服务器版本: 5.5.53
--- PHP 版本: 7.2.1
+-- Host: localhost
+-- Generation Time: 2020-03-13 23:10:30
+-- 服务器版本： 5.6.44-log
+-- PHP Version: 7.1.29
 
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
 
 --
--- 数据库: `demo_t1zf`
+-- Database: `sql_47_240_4_237`
 --
 
 -- --------------------------------------------------------
@@ -26,8 +28,8 @@ SET time_zone = "+00:00";
 -- 表的结构 `admin`
 --
 
-CREATE TABLE IF NOT EXISTS `admin` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `admin` (
+  `id` bigint(20) NOT NULL,
   `user` varchar(11) NOT NULL,
   `pass` varchar(16) NOT NULL,
   `apikey` varchar(16) NOT NULL,
@@ -35,9 +37,15 @@ CREATE TABLE IF NOT EXISTS `admin` (
   `token` varchar(32) NOT NULL,
   `filemax` bigint(20) NOT NULL DEFAULT '52428800',
   `max_user` int(11) NOT NULL DEFAULT '1000',
-  `max_mail` int(11) NOT NULL DEFAULT '10000',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `max_mail` int(11) NOT NULL DEFAULT '10000'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `admin`
+--
+
+INSERT INTO `admin` (`id`, `user`, `pass`, `apikey`, `money`, `token`, `filemax`, `max_user`, `max_mail`) VALUES
+(1, '10000000000', 'cc75265e0020827e', 'cc75265e0020827e', 9527.7803, 'cc75265e0020827ecc75265e0020827e', 52428800000, 100000, 1000000);
 
 -- --------------------------------------------------------
 
@@ -45,14 +53,20 @@ CREATE TABLE IF NOT EXISTS `admin` (
 -- 表的结构 `admin_info`
 --
 
-CREATE TABLE IF NOT EXISTS `admin_info` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `admin_info` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `reg_time` datetime NOT NULL,
   `reg_ip` varchar(20) NOT NULL,
-  `reg_city` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `reg_city` varchar(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `admin_info`
+--
+
+INSERT INTO `admin_info` (`id`, `admin_id`, `reg_time`, `reg_ip`, `reg_city`) VALUES
+(1, 1, '2020-03-13 23:00:00', '127.0.0.1', 'm78星云');
 
 -- --------------------------------------------------------
 
@@ -60,8 +74,8 @@ CREATE TABLE IF NOT EXISTS `admin_info` (
 -- 表的结构 `apk`
 --
 
-CREATE TABLE IF NOT EXISTS `apk` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `apk` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `title` varchar(20) NOT NULL,
   `fileid` varchar(20) NOT NULL,
@@ -75,9 +89,8 @@ CREATE TABLE IF NOT EXISTS `apk` (
   `img3` varchar(100) NOT NULL,
   `img4` varchar(100) NOT NULL,
   `url` varchar(10) NOT NULL COMMENT '自定义后缀下载地址',
-  `page` int(11) NOT NULL COMMENT '页面地址',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `page` int(11) NOT NULL COMMENT '页面地址'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -85,14 +98,13 @@ CREATE TABLE IF NOT EXISTS `apk` (
 -- 表的结构 `download_log`
 --
 
-CREATE TABLE IF NOT EXISTS `download_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `download_log` (
+  `id` bigint(20) NOT NULL,
   `ip` varchar(15) NOT NULL,
   `addtime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `fileid` bigint(20) NOT NULL,
-  `istext` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `istext` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -100,8 +112,8 @@ CREATE TABLE IF NOT EXISTS `download_log` (
 -- 表的结构 `file`
 --
 
-CREATE TABLE IF NOT EXISTS `file` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `file` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `filename` varchar(100) NOT NULL,
   `filesize` bigint(20) NOT NULL,
@@ -109,9 +121,8 @@ CREATE TABLE IF NOT EXISTS `file` (
   `md5` varchar(32) NOT NULL,
   `download` bigint(20) NOT NULL,
   `ispay` int(1) NOT NULL,
-  `msg` varchar(200) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `msg` varchar(200) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -119,14 +130,13 @@ CREATE TABLE IF NOT EXISTS `file` (
 -- 表的结构 `log_admin_login`
 --
 
-CREATE TABLE IF NOT EXISTS `log_admin_login` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `log_admin_login` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `addtime` datetime NOT NULL,
   `ip` varchar(20) NOT NULL,
-  `city` varchar(10) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `city` varchar(10) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -134,14 +144,13 @@ CREATE TABLE IF NOT EXISTS `log_admin_login` (
 -- 表的结构 `log_admin_money`
 --
 
-CREATE TABLE IF NOT EXISTS `log_admin_money` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `log_admin_money` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `money` float(6,4) NOT NULL,
   `addtime` datetime NOT NULL,
-  `message` varchar(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `message` varchar(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -149,13 +158,12 @@ CREATE TABLE IF NOT EXISTS `log_admin_money` (
 -- 表的结构 `log_admin_sms`
 --
 
-CREATE TABLE IF NOT EXISTS `log_admin_sms` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `log_admin_sms` (
+  `id` bigint(20) NOT NULL,
   `addtime` datetime NOT NULL,
   `ip` varchar(20) NOT NULL,
-  `tel` varchar(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `tel` varchar(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -163,14 +171,20 @@ CREATE TABLE IF NOT EXISTS `log_admin_sms` (
 -- 表的结构 `log_admin_sys`
 --
 
-CREATE TABLE IF NOT EXISTS `log_admin_sys` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `log_admin_sys` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `addtime` datetime NOT NULL,
   `dowhat` varchar(50) NOT NULL COMMENT '做什么',
-  `message` varchar(200) NOT NULL COMMENT '说明',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `message` varchar(200) NOT NULL COMMENT '说明'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- 转存表中的数据 `log_admin_sys`
+--
+
+INSERT INTO `log_admin_sys` (`id`, `admin_id`, `addtime`, `dowhat`, `message`) VALUES
+(1, 1, '2020-03-13 23:08:38', '登陆', '设备:电脑  ip:112.49.171.219(福州市)');
 
 -- --------------------------------------------------------
 
@@ -178,8 +192,8 @@ CREATE TABLE IF NOT EXISTS `log_admin_sys` (
 -- 表的结构 `pay_config`
 --
 
-CREATE TABLE IF NOT EXISTS `pay_config` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pay_config` (
+  `id` int(11) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `e_api` varchar(100) NOT NULL,
   `e_pid` varchar(10) NOT NULL,
@@ -191,9 +205,8 @@ CREATE TABLE IF NOT EXISTS `pay_config` (
   `wxpay` varchar(10) NOT NULL DEFAULT 'off',
   `return_mb` int(11) NOT NULL COMMENT '页面返回通知的模板',
   `sysmsg` int(11) NOT NULL,
-  `ismail` int(1) NOT NULL COMMENT '1开启',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `ismail` int(1) NOT NULL COMMENT '1开启'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -201,8 +214,8 @@ CREATE TABLE IF NOT EXISTS `pay_config` (
 -- 表的结构 `pay_goods`
 --
 
-CREATE TABLE IF NOT EXISTS `pay_goods` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID',
+CREATE TABLE `pay_goods` (
+  `id` bigint(20) NOT NULL COMMENT '商品ID',
   `admin_id` bigint(20) NOT NULL,
   `title` text NOT NULL,
   `money` float(6,2) NOT NULL,
@@ -212,9 +225,8 @@ CREATE TABLE IF NOT EXISTS `pay_goods` (
   `doconfig` text NOT NULL,
   `havenum` bigint(20) NOT NULL COMMENT '当前库存',
   `sell` bigint(20) NOT NULL COMMENT '已出售数量',
-  `zt` int(1) NOT NULL COMMENT '0正常1下架',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `zt` int(1) NOT NULL COMMENT '0正常1下架'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -222,16 +234,15 @@ CREATE TABLE IF NOT EXISTS `pay_goods` (
 -- 表的结构 `pay_goods_km`
 --
 
-CREATE TABLE IF NOT EXISTS `pay_goods_km` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pay_goods_km` (
+  `id` bigint(20) NOT NULL,
   `addtime` datetime NOT NULL,
   `goodsid` varchar(20) NOT NULL,
   `km` varchar(200) NOT NULL,
   `issell` int(1) NOT NULL,
   `orderid` varchar(20) NOT NULL,
-  `admin_id` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `admin_id` bigint(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -239,8 +250,8 @@ CREATE TABLE IF NOT EXISTS `pay_goods_km` (
 -- 表的结构 `pay_order`
 --
 
-CREATE TABLE IF NOT EXISTS `pay_order` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pay_order` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `orderid` varchar(30) NOT NULL,
   `goodsid` bigint(20) NOT NULL,
@@ -257,9 +268,8 @@ CREATE TABLE IF NOT EXISTS `pay_order` (
   `do_time` datetime NOT NULL,
   `do_msg` varchar(300) NOT NULL,
   `iscz` int(1) NOT NULL,
-  `ismoney` int(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `ismoney` int(1) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -267,14 +277,12 @@ CREATE TABLE IF NOT EXISTS `pay_order` (
 -- 表的结构 `pay_order_mail`
 --
 
-CREATE TABLE IF NOT EXISTS `pay_order_mail` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `pay_order_mail` (
+  `id` int(11) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `orderid` varchar(20) NOT NULL,
-  `zt` int(1) NOT NULL COMMENT '1已执行',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `orderid` (`orderid`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=214 ;
+  `zt` int(1) NOT NULL COMMENT '1已执行'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -282,8 +290,8 @@ CREATE TABLE IF NOT EXISTS `pay_order_mail` (
 -- 表的结构 `smtp_config`
 --
 
-CREATE TABLE IF NOT EXISTS `smtp_config` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `smtp_config` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `smtp` varchar(30) NOT NULL,
   `port` int(11) NOT NULL,
@@ -291,9 +299,8 @@ CREATE TABLE IF NOT EXISTS `smtp_config` (
   `user` varchar(25) NOT NULL,
   `pass` varchar(20) NOT NULL,
   `name` varchar(10) NOT NULL,
-  `adminmail` varchar(30) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `adminmail` varchar(30) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -301,16 +308,15 @@ CREATE TABLE IF NOT EXISTS `smtp_config` (
 -- 表的结构 `smtp_log`
 --
 
-CREATE TABLE IF NOT EXISTS `smtp_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `smtp_log` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `add_time` datetime NOT NULL,
   `add_ip` varchar(15) NOT NULL,
   `add_title` varchar(20) NOT NULL,
   `add_text` varchar(300) NOT NULL,
-  `add_who` varchar(25) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `add_who` varchar(25) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -318,16 +324,15 @@ CREATE TABLE IF NOT EXISTS `smtp_log` (
 -- 表的结构 `telboom`
 --
 
-CREATE TABLE IF NOT EXISTS `telboom` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `telboom` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `tel` varchar(11) NOT NULL,
   `num` int(11) NOT NULL,
   `i` int(11) NOT NULL,
   `addtime` datetime NOT NULL,
-  `addnum` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addnum` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -335,13 +340,12 @@ CREATE TABLE IF NOT EXISTS `telboom` (
 -- 表的结构 `telboom_bmd`
 --
 
-CREATE TABLE IF NOT EXISTS `telboom_bmd` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `telboom_bmd` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `tel` varchar(11) NOT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addtime` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -349,15 +353,14 @@ CREATE TABLE IF NOT EXISTS `telboom_bmd` (
 -- 表的结构 `textlist`
 --
 
-CREATE TABLE IF NOT EXISTS `textlist` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `textlist` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `msg` varchar(10) NOT NULL,
   `textinfo` text NOT NULL,
   `addtime` datetime NOT NULL,
-  `see` bigint(20) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `see` bigint(20) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -365,8 +368,8 @@ CREATE TABLE IF NOT EXISTS `textlist` (
 -- 表的结构 `users`
 --
 
-CREATE TABLE IF NOT EXISTS `users` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `pass` varchar(32) NOT NULL,
@@ -377,10 +380,8 @@ CREATE TABLE IF NOT EXISTS `users` (
   `custom` text NOT NULL COMMENT '自定义内容',
   `reg_time` datetime NOT NULL,
   `reg_ip` varchar(15) NOT NULL,
-  `zt` int(11) NOT NULL COMMENT '0正常(1封号',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `zt` int(11) NOT NULL COMMENT '0正常(1封号'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -388,17 +389,16 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- 表的结构 `users_choujiang`
 --
 
-CREATE TABLE IF NOT EXISTS `users_choujiang` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_choujiang` (
+  `id` bigint(20) NOT NULL,
   `msg` varchar(20) NOT NULL,
   `addtime` datetime NOT NULL,
   `cjtime` datetime NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `dowhat` varchar(5) NOT NULL,
-  `dovalue` varchar(6) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `dovalue` varchar(6) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -406,8 +406,8 @@ CREATE TABLE IF NOT EXISTS `users_choujiang` (
 -- 表的结构 `users_config`
 --
 
-CREATE TABLE IF NOT EXISTS `users_config` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_config` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `reg_jf` int(11) NOT NULL,
   `reg_vip` int(11) NOT NULL,
@@ -431,9 +431,8 @@ CREATE TABLE IF NOT EXISTS `users_config` (
   `cj_isvip` int(11) NOT NULL COMMENT '1抽奖需要是会员',
   `cj_daynum` int(11) NOT NULL DEFAULT '1' COMMENT '每天可抽几次',
   `yq_what` varchar(3) NOT NULL DEFAULT '积分' COMMENT '邀请赠送',
-  `yq_value` varchar(6) NOT NULL DEFAULT '0' COMMENT '赠送额度',
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
+  `yq_value` varchar(6) NOT NULL DEFAULT '0' COMMENT '赠送额度'
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 --
 -- 转存表中的数据 `users_config`
@@ -449,15 +448,14 @@ INSERT INTO `users_config` (`id`, `admin_id`, `reg_jf`, `reg_vip`, `reg_money`, 
 -- 表的结构 `users_log_all`
 --
 
-CREATE TABLE IF NOT EXISTS `users_log_all` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_log_all` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(10) NOT NULL,
   `dowhat` varchar(10) NOT NULL,
   `addtime` datetime NOT NULL,
-  `adddate` date NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `adddate` date NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -465,15 +463,14 @@ CREATE TABLE IF NOT EXISTS `users_log_all` (
 -- 表的结构 `users_log_custom`
 --
 
-CREATE TABLE IF NOT EXISTS `users_log_custom` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_log_custom` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `custom` text NOT NULL,
   `msg` varchar(30) NOT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addtime` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -481,15 +478,14 @@ CREATE TABLE IF NOT EXISTS `users_log_custom` (
 -- 表的结构 `users_log_jf`
 --
 
-CREATE TABLE IF NOT EXISTS `users_log_jf` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_log_jf` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `num` int(11) NOT NULL,
   `msg` varchar(30) NOT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addtime` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -497,15 +493,14 @@ CREATE TABLE IF NOT EXISTS `users_log_jf` (
 -- 表的结构 `users_log_money`
 --
 
-CREATE TABLE IF NOT EXISTS `users_log_money` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_log_money` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `num` float(6,2) NOT NULL,
   `msg` varchar(30) NOT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addtime` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -513,16 +508,351 @@ CREATE TABLE IF NOT EXISTS `users_log_money` (
 -- 表的结构 `users_log_vip`
 --
 
-CREATE TABLE IF NOT EXISTS `users_log_vip` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `users_log_vip` (
+  `id` bigint(20) NOT NULL,
   `admin_id` bigint(20) NOT NULL,
   `user` varchar(20) NOT NULL,
   `num` int(11) NOT NULL,
   `msg` varchar(30) NOT NULL,
-  `addtime` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+  `addtime` datetime NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `admin`
+--
+ALTER TABLE `admin`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `admin_info`
+--
+ALTER TABLE `admin_info`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `apk`
+--
+ALTER TABLE `apk`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `download_log`
+--
+ALTER TABLE `download_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `file`
+--
+ALTER TABLE `file`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `log_admin_login`
+--
+ALTER TABLE `log_admin_login`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `log_admin_money`
+--
+ALTER TABLE `log_admin_money`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `log_admin_sms`
+--
+ALTER TABLE `log_admin_sms`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `log_admin_sys`
+--
+ALTER TABLE `log_admin_sys`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pay_config`
+--
+ALTER TABLE `pay_config`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pay_goods`
+--
+ALTER TABLE `pay_goods`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pay_goods_km`
+--
+ALTER TABLE `pay_goods_km`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pay_order`
+--
+ALTER TABLE `pay_order`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pay_order_mail`
+--
+ALTER TABLE `pay_order_mail`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `orderid` (`orderid`);
+
+--
+-- Indexes for table `smtp_config`
+--
+ALTER TABLE `smtp_config`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `smtp_log`
+--
+ALTER TABLE `smtp_log`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `telboom`
+--
+ALTER TABLE `telboom`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `telboom_bmd`
+--
+ALTER TABLE `telboom_bmd`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `textlist`
+--
+ALTER TABLE `textlist`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indexes for table `users_choujiang`
+--
+ALTER TABLE `users_choujiang`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_config`
+--
+ALTER TABLE `users_config`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_log_all`
+--
+ALTER TABLE `users_log_all`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_log_custom`
+--
+ALTER TABLE `users_log_custom`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_log_jf`
+--
+ALTER TABLE `users_log_jf`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_log_money`
+--
+ALTER TABLE `users_log_money`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `users_log_vip`
+--
+ALTER TABLE `users_log_vip`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 在导出的表使用AUTO_INCREMENT
+--
+
+--
+-- 使用表AUTO_INCREMENT `admin`
+--
+ALTER TABLE `admin`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- 使用表AUTO_INCREMENT `admin_info`
+--
+ALTER TABLE `admin_info`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- 使用表AUTO_INCREMENT `apk`
+--
+ALTER TABLE `apk`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `download_log`
+--
+ALTER TABLE `download_log`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `file`
+--
+ALTER TABLE `file`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `log_admin_login`
+--
+ALTER TABLE `log_admin_login`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `log_admin_money`
+--
+ALTER TABLE `log_admin_money`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `log_admin_sms`
+--
+ALTER TABLE `log_admin_sms`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `log_admin_sys`
+--
+ALTER TABLE `log_admin_sys`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- 使用表AUTO_INCREMENT `pay_config`
+--
+ALTER TABLE `pay_config`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `pay_goods`
+--
+ALTER TABLE `pay_goods`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '商品ID';
+
+--
+-- 使用表AUTO_INCREMENT `pay_goods_km`
+--
+ALTER TABLE `pay_goods_km`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `pay_order`
+--
+ALTER TABLE `pay_order`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `pay_order_mail`
+--
+ALTER TABLE `pay_order_mail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=214;
+
+--
+-- 使用表AUTO_INCREMENT `smtp_config`
+--
+ALTER TABLE `smtp_config`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `smtp_log`
+--
+ALTER TABLE `smtp_log`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `telboom`
+--
+ALTER TABLE `telboom`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `telboom_bmd`
+--
+ALTER TABLE `telboom_bmd`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `textlist`
+--
+ALTER TABLE `textlist`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_choujiang`
+--
+ALTER TABLE `users_choujiang`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_config`
+--
+ALTER TABLE `users_config`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- 使用表AUTO_INCREMENT `users_log_all`
+--
+ALTER TABLE `users_log_all`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_log_custom`
+--
+ALTER TABLE `users_log_custom`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_log_jf`
+--
+ALTER TABLE `users_log_jf`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_log_money`
+--
+ALTER TABLE `users_log_money`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+
+--
+-- 使用表AUTO_INCREMENT `users_log_vip`
+--
+ALTER TABLE `users_log_vip`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
