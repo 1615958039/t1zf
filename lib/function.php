@@ -4,7 +4,20 @@
 	session_start();
 	date_default_timezone_set("Asia/Shanghai");
 	
-	include("config.php");
+	/* 数据库 -> IP，账号，密码，表名 */
+	
+	$loca = '127.0.0.1';
+	$user = 'root';
+	$pass = 'wasd100861';
+	$name = 't1zf';
+	
+	/* 站点域名 */		$t1zf = 'http://t1zf.com/';
+	/* 服务器ip */	$serverip = '118.99.9.69';
+	
+		
+	/* 时间日期 */ 	$date = date("Y-m-d H:i:s"); 
+	/* 时间戳 */		$time = time();
+	/* 后台账号 */		$admin = $_SESSION["admin"];
 	
 	
 	
